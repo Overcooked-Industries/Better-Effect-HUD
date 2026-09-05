@@ -17,7 +17,7 @@ public class BetterEffectHudScreen extends Screen {
         super(title);
     }
 
-    public Button newButton(Component name, Button.OnPress onPress, int posX, int posY, int sizeX, int sizeY, int alignX, int alignY) {
+    public static Button newButton(Component name, Button.OnPress onPress, int posX, int posY, int sizeX, int sizeY, int alignX, int alignY) {
         int windowGuiScale = Minecraft.getInstance().getWindow().getGuiScale();
         int windowSizeX = Minecraft.getInstance().getWindow().getWidth() / windowGuiScale;
         int windowSizeY = Minecraft.getInstance().getWindow().getHeight() / windowGuiScale;
@@ -30,21 +30,17 @@ public class BetterEffectHudScreen extends Screen {
         buttonX += (int) (windowSizeX * alignMultiplierX);
         buttonY += (int) (windowSizeY * alignMultiplierY);
         Button buttonWidget = Button.builder(name, onPress).bounds(buttonX, buttonY, sizeX, sizeY).build();
-        this.addRenderableWidget(buttonWidget);
         return buttonWidget;
     }
 
     public TabNavigationBar tabNavigationBar(Tab[] tabs) {
+        int count = tabs.length;
+        int windowSizeX = Minecraft.getInstance().getWindow().getWidth() / Minecraft.getInstance().getWindow().getGuiScale();
         TabManager tabManager = new TabManager(this::addRenderableWidget, this::removeWidget);
         List<MenuTabBar.MenuTabButton> newMenuTabButtons = new ArrayList<>();
-        for (Tab tab : tabs) {newMenuTabButtons.add(new MenuTabBar.MenuTabButton(tabManager, tab, 100, 24));}
-        TabNavigationBar tabNavigationBar = new MenuTabBar(0, 0, Minecraft.getInstance().getWindow().getWidth() / Minecraft.getInstance().getWindow().getGuiScale(), 24, tabManager, ImmutableList.copyOf(newMenuTabButtons), ImmutableList.copyOf(tabs));
+        for (Tab tab : tabs) {newMenuTabButtons.add(new MenuTabBar.MenuTabButton(tabManager, tab, windowSizeX / count, 24));}
+        TabNavigationBar tabNavigationBar = new MenuTabBar(0, 0, windowSizeX, 24, tabManager, ImmutableList.copyOf(newMenuTabButtons), ImmutableList.copyOf(tabs));
         tabNavigationBar.selectTab(0, false);
-        this.addRenderableWidget(tabNavigationBar);
         return tabNavigationBar;
-    }
-
-    public void openScreen(BetterEffectHudScreen screen) {
-        Minecraft.getInstance().setScreenAndShow(screen);
     }
 }
