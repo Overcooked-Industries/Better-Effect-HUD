@@ -1,5 +1,6 @@
 package overcooked_industries.better_effect_hud.client;
 
+import com.google.common.collect.ImmutableList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.tabs.*;
@@ -7,6 +8,9 @@ import net.minecraft.client.gui.layouts.GridLayout;
 import net.minecraft.client.gui.layouts.LayoutSettings;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class BetterEffectHudScreen extends Screen {
     public BetterEffectHudScreen(Component title) {
@@ -32,9 +36,9 @@ public class BetterEffectHudScreen extends Screen {
 
     public TabNavigationBar tabNavigationBar(Tab[] tabs) {
         TabManager tabManager = new TabManager(this::addRenderableWidget, this::removeWidget);
-        MenuTabBar.Builder menuTabBarBuilder = MenuTabBar.builder(tabManager, Minecraft.getInstance().getWindow().getWidth() / Minecraft.getInstance().getWindow().getGuiScale());
-        for (Tab tab : tabs) {menuTabBarBuilder.addTab(tab);}
-        TabNavigationBar tabNavigationBar = menuTabBarBuilder.build();
+        List<MenuTabBar.MenuTabButton> newMenuTabButtons = new ArrayList<>();
+        for (Tab tab : tabs) {newMenuTabButtons.add(new MenuTabBar.MenuTabButton(tabManager, tab, 100, 24));}
+        TabNavigationBar tabNavigationBar = new MenuTabBar(0, 0, Minecraft.getInstance().getWindow().getWidth() / Minecraft.getInstance().getWindow().getGuiScale(), 24, tabManager, ImmutableList.copyOf(newMenuTabButtons), ImmutableList.copyOf(tabs));
         tabNavigationBar.selectTab(0, false);
         this.addRenderableWidget(tabNavigationBar);
         return tabNavigationBar;
