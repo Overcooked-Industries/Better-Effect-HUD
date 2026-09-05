@@ -1,0 +1,42 @@
+{
+	"schemaVersion": 1,
+	"id": "better_effect_hud",
+	"version": "${version}",
+	"name": "Better Effect HUD",
+	"description": "Adds more customization options for the status effect hud.",
+	"authors": [
+		"Overcooked Industries",
+		"0wined"
+	],
+	"license": "ARR",
+	"icon": "assets/better_effect_hud/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"overcooked_industries.better_effect_hud.BetterEffectHUD"
+		],
+		"client": [
+			"overcooked_industries.better_effect_hud.client.BetterEffectHUDClient"
+		],
+		"fabric-datagen": [
+			"overcooked_industries.better_effect_hud.client.BetterEffectHUDDataGenerator"
+		],
+		"modmenu": [
+			"overcooked_industries.better_effect_hud.client.BetterEffectHudConfigScreen"
+		]
+	},
+	"mixins": [
+		"better_effect_hud.mixins.json",
+		{
+			"config": "better_effect_hud.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.19.5",
+		"minecraft": "~26.2",
+		"java": ">=25",
+		"fabric-api": "*",
+		"modmenu": ">=20.0.1"
+	}
+}
