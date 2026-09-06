@@ -4,29 +4,44 @@ import net.minecraft.resources.Identifier;
 import overcooked_industries.better_effect_hud.client.screens.elements.BetterEffectHudAlignment;
 
 public class BetterEffectHudConfig {
+    private static BetterEffectHudConfig instance = null;
+
+    //Singleton
+    public static BetterEffectHudConfig getInstance() {
+        if(instance == null) instance = new BetterEffectHudConfig();
+        return instance;
+    }
+
+    //Must stay private!
+    private BetterEffectHudConfig() {
+
+    }
+
     //General
-    boolean enableMod = true;
+    public Boolean enableMod = true;
 
     //Info
-    boolean enableTimer = false;
-    boolean enablePotency = false;
-    BetterEffectHudAlignment timerPos = BetterEffectHudAlignment.BOTTOM_MIDDLE;
-    BetterEffectHudAlignment potencyPos = BetterEffectHudAlignment.TOP_RIGHT;
-    int timerColor = 0x000000AA;
-    int potencyColor = 0x000000AA;
-    boolean autoTimerColor = true;
-    boolean autoPotencyColor = true;
-    double timerSize = 1.0;
-    double potencySize = 1.0;
+    public Boolean enableTimer = false;
+    public Boolean enablePotency = false;
+    public BetterEffectHudAlignment timerPos = BetterEffectHudAlignment.BOTTOM_MIDDLE;
+    public BetterEffectHudAlignment potencyPos = BetterEffectHudAlignment.TOP_RIGHT;
+    public Integer timerColor = 0x000000AA;
+    public Integer potencyColor = 0x000000AA;
+    public Boolean autoTimerColor = true;
+    public Boolean autoPotencyColor = true;
+    public Double timerSize = 1.0;
+    public Double potencySize = 1.0;
 
     //Duration Bar
-    boolean enableDurationBar = false;
+    public Boolean enableDurationBar = false;
 
-     //Warning
-    boolean enableWarning = false;
-    Identifier[] effectsIdentifiers = {Identifier.withDefaultNamespace("strength"), Identifier.withDefaultNamespace("speed")};
+    //Warning
+    public Boolean enableWarning = false;
+    public Identifier[] effectsIdentifiers = {Identifier.withDefaultNamespace("strength"), Identifier.withDefaultNamespace("speed")};
 
     //Position
-    BetterEffectHudAlignment hudAlignment = BetterEffectHudAlignment.TOP_RIGHT;
-    double hudSize = 1.0;
+    public BetterEffectHudAlignment hudAlignment = BetterEffectHudAlignment.TOP_RIGHT;
+    public Double hudSize = 1.0;
+
+
 }

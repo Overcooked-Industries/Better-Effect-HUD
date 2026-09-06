@@ -12,6 +12,8 @@ import overcooked_industries.better_effect_hud.client.config.BetterEffectHudConf
 import overcooked_industries.better_effect_hud.client.screens.elements.BetterEffectHudAlignment;
 import overcooked_industries.better_effect_hud.client.screens.elements.BetterEffectHudSlider;
 
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,23 +41,29 @@ public abstract class BetterEffectHudScreen extends Screen {
         return buttonWidget;
     }
 
-    public static Button newToggleButton(Component name, int posX, int posY, int sizeX, int sizeY, BetterEffectHudAlignment alignment, String toggleVariable) {
-        Field toggleVariableField;
-        Component stateComponent = Component.translatable("better_effect_hud.button.toggle.off");
-        boolean toggleVariableValue;
+    public static Button newToggleButton(Component name, int posX, int posY, int sizeX, int sizeY, BetterEffectHudAlignment alignment, String field) {
+        //Horrible hacks due to lambda
+        VarHandle handle;
         try {
-            toggleVariableField = BetterEffectHudConfig.class.getField(toggleVariable);
-            toggleVariableValue = (boolean) toggleVariableField.get(BetterEffectHudConfig.class);
+            handle = MethodHandles.lookup().findVarHandle(BetterEffectHudConfig.class, field, Boolean.class);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
-        if (toggleVariableValue) {stateComponent = Component.translatable("better_effect_hud.button.toggle.on");}
+
+        Component stateComponent = Component.translatable("better_effect_hud.button.toggle.off");
+
+        if (((Boolean) handle.get(BetterEffectHudConfig.getInstance()))) {
+            stateComponent = Component.translatable("better_effect_hud.button.toggle.on");
+        }
+
         Button newButton = BetterEffectHudScreen.newButton(Component.literal(name.getString() + stateComponent), (btn) -> {
-            try {
-                toggleVariableField.set(BetterEffectHudConfig.class, !toggleVariableValue);
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
+            //Dirty VarHandle hacks
+            //We would like to just mutate the state of a reference type, but we cannot mutate outer variables from inside a lambda body due to https://docs.oracle.com/javase/specs/jls/se10/html/jls-15.html#jls-15.27.2
+            //We can get the instance of the singleton and toggle a value by direct assignment like BetterEffectHudConfig.getInstance().enableMod = true, but we unfortuantely cannot tell what field has been passed off Boolean
+            //Another solution would be adding a toggle method to the class itself, which would operate on a massive switch statement to set the appropriate field based on a String
+            //The toggle method wouldn't be able to outsource the "clean" solution without itself including dirty VarHandle hacks though
+            handle.set(BetterEffectHudConfig.getInstance(), !((Boolean) handle.get(BetterEffectHudConfig.getInstance())));
+
             BetterEffectHudConfigManager.serialize();
         }, posX, posY, sizeX, sizeY, alignment);
         return newButton;

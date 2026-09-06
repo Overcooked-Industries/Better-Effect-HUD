@@ -25,7 +25,7 @@ public class BetterEffectHudConfigManager {
                 e.printStackTrace();
             }
         }
-        config = new BetterEffectHudConfig();
+        config = BetterEffectHudConfig.getInstance();
         serialize();
         return config;
     }
