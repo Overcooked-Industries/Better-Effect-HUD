@@ -22,7 +22,7 @@
 			"overcooked_industries.better_effect_hud.client.BetterEffectHUDDataGenerator"
 		],
 		"modmenu": [
-			"overcooked_industries.better_effect_hud.client.BetterEffectHudConfigScreen"
+          "overcooked_industries.better_effect_hud.client.screens.BetterEffectHudConfigScreen"
 		]
 	},
 	"mixins": [

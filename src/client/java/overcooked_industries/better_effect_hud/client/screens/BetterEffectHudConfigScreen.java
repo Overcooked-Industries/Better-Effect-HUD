@@ -1,4 +1,4 @@
-package overcooked_industries.better_effect_hud.client;
+package overcooked_industries.better_effect_hud.client.screens;
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
@@ -6,9 +6,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.tabs.GridLayoutTab;
 import net.minecraft.client.gui.components.tabs.Tab;
 import net.minecraft.client.gui.layouts.GridLayout;
-import net.minecraft.client.gui.layouts.LayoutSettings;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import overcooked_industries.better_effect_hud.client.screens.elements.BetterEffectHudAlignment;
 
 
 public class BetterEffectHudConfigScreen implements ModMenuApi {
@@ -18,14 +18,14 @@ public class BetterEffectHudConfigScreen implements ModMenuApi {
         return (Screen parent) -> new BetterEffectHudScreen(Component.literal("Better Effect Hud Config")) {
             @Override
             protected void init() {
-                addRenderableWidget(tabNavigationBar(new Tab[] {
-                        new GeneralTab(parent),
-                        new InfoTab(parent),
-                        new DurationBarTab(parent),
-                        new WarningTab(parent),
-                        new PositionTab(parent),
+                addRenderableWidget(newTabNavigationBar(new Tab[] {
+                        new GeneralTab(),
+                        new InfoTab(),
+                        new DurationBarTab(),
+                        new WarningTab(),
+                        new PositionTab(),
                 }));
-                addRenderableWidget(BetterEffectHudScreen.newButton(Component.translatable("gui.done"), (btn) -> Minecraft.getInstance().setScreenAndShow(parent), 0, -25, 200, 21, 1, 2));
+                addRenderableWidget(BetterEffectHudScreen.newButton(Component.translatable("gui.done"), (btn) -> Minecraft.getInstance().setScreenAndShow(parent), 0, -25, 200, 21, BetterEffectHudAlignment.BOTTOM_MIDDLE));
             }
         };
     }
@@ -33,39 +33,39 @@ public class BetterEffectHudConfigScreen implements ModMenuApi {
     private class GeneralTab extends GridLayoutTab {
         private static final Component TITLE = Component.literal("General Settings");
 
-        private GeneralTab(Screen parent) {
+        private GeneralTab() {
             super(TITLE);
-            GridLayout.RowHelper helper = this.layout.rowSpacing(8).createRowHelper(1);
+            layout.addChild(BetterEffectHudScreen.newToggleButton(Component.literal("Enable Mod"), 10, 34, 100, 21, BetterEffectHudAlignment.TOP_LEFT, "enableMod"), 0, 0);
         }
     }
-    private class InfoTab extends GridLayoutTab {
+    private static class InfoTab extends GridLayoutTab {
         private static final Component TITLE = Component.literal("Timer & Potency");
 
-        private InfoTab(Screen parent) {
+        private InfoTab() {
             super(TITLE);
             GridLayout.RowHelper helper = this.layout.rowSpacing(8).createRowHelper(1);
         }
     }
-    private class DurationBarTab extends GridLayoutTab {
+    private static class DurationBarTab extends GridLayoutTab {
         private static final Component TITLE = Component.literal("Duration Bar");
 
-        private DurationBarTab(Screen parent) {
+        private DurationBarTab() {
             super(TITLE);
             GridLayout.RowHelper helper = this.layout.rowSpacing(8).createRowHelper(1);
         }
     }
-    private class WarningTab extends GridLayoutTab {
+    private static class WarningTab extends GridLayoutTab {
         private static final Component TITLE = Component.literal("Vignette Warning");
 
-        private WarningTab(Screen parent) {
+        private WarningTab() {
             super(TITLE);
             GridLayout.RowHelper helper = this.layout.rowSpacing(8).createRowHelper(1);
         }
     }
-    private class PositionTab extends GridLayoutTab {
+    private static class PositionTab extends GridLayoutTab {
         private static final Component TITLE = Component.literal("Position & Size");
 
-        private PositionTab(Screen parent) {
+        private PositionTab() {
             super(TITLE);
             GridLayout.RowHelper helper = this.layout.rowSpacing(8).createRowHelper(1);
         }
