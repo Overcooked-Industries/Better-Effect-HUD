@@ -39,20 +39,19 @@ public abstract class BetterEffectHudScreen extends Screen {
         return Button.builder(name, onPress).bounds(buttonX, buttonY, sizeX, sizeY).build();
     }
 
-    public static Button newToggleButton(Component name, int posX, int posY, int sizeX, int sizeY, BetterEffectHudAlignment alignment, String field) {
+    //It is the caller's responsibility to call this method correctly, hence we throw an exception if that contract is not fulfilled
+    //If the field being accessed exists and is modifiable without much effort, this method is guaranteed to work correctly
+    //From this context, we cannot do much, except delegate the responsibility of dealing with Exceptions to the caller (since providing faulty arguments is on the caller)
+    public static Button newToggleButton(Component name, int posX, int posY, int sizeX, int sizeY, BetterEffectHudAlignment alignment, String field) throws NoSuchFieldException, IllegalAccessException {
         //Horrible hacks due to lambda
-        VarHandle handle;
-        try {
-            handle = MethodHandles.lookup().findVarHandle(BetterEffectHudConfig.class, field, Boolean.class);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+        VarHandle handle = MethodHandles.lookup().findVarHandle(BetterEffectHudConfig.class, field, Boolean.class);
 
-        Component stateComponent = Component.translatable("better_effect_hud.button.toggle.off");
+        boolean isOn = ((Boolean) handle.get(BetterEffectHudConfig.getInstance()));
 
-        if (((Boolean) handle.get(BetterEffectHudConfig.getInstance()))) {
-            stateComponent = Component.translatable("better_effect_hud.button.toggle.on");
-        }
+        var offComponent = Component.translatable("better_effect_hud.button.toggle.off");
+        var onComponent = Component.translatable("better_effect_hud.button.toggle.on");
+
+        Component stateComponent =  isOn ? onComponent : offComponent;
 
         return BetterEffectHudScreen.newButton(Component.literal(name.getString() + stateComponent.getString()), (btn) -> {
             //Dirty VarHandle hacks
@@ -61,9 +60,9 @@ public abstract class BetterEffectHudScreen extends Screen {
             //Another solution would be adding a toggle method to the class itself, which would operate on a massive switch statement to set the appropriate field based on a String
             //The toggle method wouldn't be able to outsource the "clean" solution without itself including dirty VarHandle hacks though
             handle.set(BetterEffectHudConfig.getInstance(), !((Boolean) handle.get(BetterEffectHudConfig.getInstance())));
+
             BetterEffectHudConfigManager.serialize();
-            Minecraft.getInstance().gui.setScreen(Minecraft.getInstance().gui.screen());
-        }, posX, posY, sizeX, sizeY, alignment);
+            Minecraft.getInstance().gui.setScreen(Minecraft.getInstance().gui.screen());        }, posX, posY, sizeX, sizeY, alignment);
     }
 
     public static BetterEffectHudSlider newSlider(Component title, int posX, int posY, int sizeX, int sizeY) {

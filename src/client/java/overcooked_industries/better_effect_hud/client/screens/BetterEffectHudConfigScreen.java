@@ -35,15 +35,26 @@ public class BetterEffectHudConfigScreen implements ModMenuApi {
 
         private GeneralTab() {
             super(TITLE);
-            layout.addChild(BetterEffectHudScreen.newToggleButton(Component.literal("Enable Mod"), 10, 34, 100, 21, BetterEffectHudAlignment.TOP_LEFT, "enableMod"), 0, 0);
+            try {
+                layout.addChild(BetterEffectHudScreen.newToggleButton(Component.literal("Enable Mod"), 10, 34, 100, 21, BetterEffectHudAlignment.TOP_LEFT, "enableMod"), 0, 0);
+            } catch (NoSuchFieldException | IllegalAccessException _) {
+                //No Exception will ever be thrown, since we know the enableMod field exists in the BetterEffectHudAlignment instance and is modifiable
+                //TODO: Consider throwing a RuntimeException instead to fail loudly? Discuss!
+            }
         }
     }
+
     private static class InfoTab extends GridLayoutTab {
         private static final Component TITLE = Component.literal("Timer & Potency");
 
         private InfoTab() {
             super(TITLE);
-            layout.addChild(BetterEffectHudScreen.newToggleButton(Component.literal("Enable Mod"), 10, 34, 100, 21, BetterEffectHudAlignment.TOP_LEFT, "enableMod"), 0, 0);
+            try {
+                layout.addChild(BetterEffectHudScreen.newToggleButton(Component.literal("Enable Mod"), 10, 34, 100, 21, BetterEffectHudAlignment.TOP_LEFT, "enableMod"), 0, 0);
+            } catch (NoSuchFieldException | IllegalAccessException _) {
+                //No Exception will ever be thrown, since we know the enableMod field exists in the BetterEffectHudAlignment instance and is modifiable
+                //TODO: Consider throwing a RuntimeException instead to fail loudly? Discuss!
+            }
         }
     }
     private static class DurationBarTab extends GridLayoutTab {
