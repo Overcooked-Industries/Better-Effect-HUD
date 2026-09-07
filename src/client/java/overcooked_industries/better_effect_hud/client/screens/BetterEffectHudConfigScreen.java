@@ -8,7 +8,6 @@ import net.minecraft.client.gui.components.tabs.Tab;
 import net.minecraft.client.gui.layouts.GridLayout;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import overcooked_industries.better_effect_hud.client.config.BetterEffectHudConfig;
 import overcooked_industries.better_effect_hud.client.screens.elements.BetterEffectHudAlignment;
 
 
@@ -25,7 +24,7 @@ public class BetterEffectHudConfigScreen implements ModMenuApi {
                         new DurationBarTab(),
                         new WarningTab(),
                         new PositionTab(),
-                }));
+                }, 1));
                 addRenderableWidget(BetterEffectHudScreen.newButton(Component.translatable("gui.done"), (btn) -> Minecraft.getInstance().setScreenAndShow(parent), 0, -25, 200, 21, BetterEffectHudAlignment.BOTTOM_MIDDLE));
             }
         };
@@ -36,7 +35,6 @@ public class BetterEffectHudConfigScreen implements ModMenuApi {
 
         private GeneralTab() {
             super(TITLE);
-            //TODO: make screen refresh itself after toggling
             layout.addChild(BetterEffectHudScreen.newToggleButton(Component.literal("Enable Mod"), 10, 34, 100, 21, BetterEffectHudAlignment.TOP_LEFT, "enableMod"), 0, 0);
         }
     }
@@ -45,7 +43,7 @@ public class BetterEffectHudConfigScreen implements ModMenuApi {
 
         private InfoTab() {
             super(TITLE);
-            GridLayout.RowHelper helper = this.layout.rowSpacing(8).createRowHelper(1);
+            layout.addChild(BetterEffectHudScreen.newToggleButton(Component.literal("Enable Mod"), 10, 34, 100, 21, BetterEffectHudAlignment.TOP_LEFT, "enableMod"), 0, 0);
         }
     }
     private static class DurationBarTab extends GridLayoutTab {

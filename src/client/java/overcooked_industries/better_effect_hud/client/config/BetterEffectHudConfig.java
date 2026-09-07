@@ -8,15 +8,14 @@ public class BetterEffectHudConfig {
 
     //Singleton
     public static BetterEffectHudConfig getInstance() {
-        if(instance == null) instance = new BetterEffectHudConfig();
+        if (instance == null) instance = new BetterEffectHudConfig();
         return instance;
     }
 
-    //Must stay private!
-    private BetterEffectHudConfig() {
+    //Must be private.
+    private BetterEffectHudConfig() {}
 
-    }
-
+    /// Settings for each Tab.
     //General
     public Boolean enableMod = true;
 
@@ -42,6 +41,4 @@ public class BetterEffectHudConfig {
     //Position
     public BetterEffectHudAlignment hudAlignment = BetterEffectHudAlignment.TOP_RIGHT;
     public Double hudSize = 1.0;
-
-
 }

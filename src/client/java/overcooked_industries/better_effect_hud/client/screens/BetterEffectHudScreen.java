@@ -14,7 +14,6 @@ import overcooked_industries.better_effect_hud.client.screens.elements.BetterEff
 
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,8 +36,7 @@ public abstract class BetterEffectHudScreen extends Screen {
         buttonY -= (int) (sizeY * alignMultiplierY);
         buttonX += (int) (windowSizeX * alignMultiplierX);
         buttonY += (int) (windowSizeY * alignMultiplierY);
-        Button buttonWidget = Button.builder(name, onPress).bounds(buttonX, buttonY, sizeX, sizeY).build();
-        return buttonWidget;
+        return Button.builder(name, onPress).bounds(buttonX, buttonY, sizeX, sizeY).build();
     }
 
     public static Button newToggleButton(Component name, int posX, int posY, int sizeX, int sizeY, BetterEffectHudAlignment alignment, String field) {
@@ -56,21 +54,20 @@ public abstract class BetterEffectHudScreen extends Screen {
             stateComponent = Component.translatable("better_effect_hud.button.toggle.on");
         }
 
-        Button newButton = BetterEffectHudScreen.newButton(Component.literal(name.getString() + stateComponent), (btn) -> {
+        return BetterEffectHudScreen.newButton(Component.literal(name.getString() + stateComponent.getString()), (btn) -> {
             //Dirty VarHandle hacks
             //We would like to just mutate the state of a reference type, but we cannot mutate outer variables from inside a lambda body due to https://docs.oracle.com/javase/specs/jls/se10/html/jls-15.html#jls-15.27.2
             //We can get the instance of the singleton and toggle a value by direct assignment like BetterEffectHudConfig.getInstance().enableMod = true, but we unfortuantely cannot tell what field has been passed off Boolean
             //Another solution would be adding a toggle method to the class itself, which would operate on a massive switch statement to set the appropriate field based on a String
             //The toggle method wouldn't be able to outsource the "clean" solution without itself including dirty VarHandle hacks though
             handle.set(BetterEffectHudConfig.getInstance(), !((Boolean) handle.get(BetterEffectHudConfig.getInstance())));
-
             BetterEffectHudConfigManager.serialize();
+            Minecraft.getInstance().gui.setScreen(Minecraft.getInstance().gui.screen());
         }, posX, posY, sizeX, sizeY, alignment);
-        return newButton;
     }
 
     public static BetterEffectHudSlider newSlider(Component title, int posX, int posY, int sizeX, int sizeY) {
-        BetterEffectHudSlider newBetterEffectHudSlider = new BetterEffectHudSlider(
+        return new BetterEffectHudSlider(
                 posX,
                 posY,
                 sizeX,
@@ -78,7 +75,22 @@ public abstract class BetterEffectHudScreen extends Screen {
                 title.getString(),
                 1
         );
-        return newBetterEffectHudSlider;
+    }
+
+    // TODO: Added screen reloading, but it doesnt work for tabpages of newTabNavigationBar. It just gets reset to the "page" property.
+    public TabNavigationBar newTabNavigationBar(Tab[] tabs, int page) {
+        int count = tabs.length;
+        // TODO: Please add a better fix for this Exception.
+        if (page >= count) {return null;}
+        int windowSizeX = Minecraft.getInstance().getWindow().getWidth() / Minecraft.getInstance().getWindow().getGuiScale();
+        TabManager tabManager = new TabManager(this::addRenderableWidget, this::removeWidget);
+        List<MenuTabBar.MenuTabButton> newMenuTabButtons = new ArrayList<>();
+        for (Tab tab : tabs) {
+            newMenuTabButtons.add(new MenuTabBar.MenuTabButton(tabManager, tab, windowSizeX / count, 24));
+        }
+        TabNavigationBar newTabNavigationBar = new MenuTabBar(0, 0, windowSizeX, 24, tabManager, ImmutableList.copyOf(newMenuTabButtons), ImmutableList.copyOf(tabs));
+        newTabNavigationBar.selectTab(page, false);
+        return newTabNavigationBar;
     }
 
     public void newLabel(GuiGraphicsExtractor graphics, Component title, int posX, int posY, int color) {
@@ -89,16 +101,7 @@ public abstract class BetterEffectHudScreen extends Screen {
         graphics.centeredText(minecraft.font, title.getString(), posX, posY, color);
     }
 
-    public TabNavigationBar newTabNavigationBar(Tab[] tabs) {
-        int count = tabs.length;
-        int windowSizeX = Minecraft.getInstance().getWindow().getWidth() / Minecraft.getInstance().getWindow().getGuiScale();
-        TabManager tabManager = new TabManager(this::addRenderableWidget, this::removeWidget);
-        List<MenuTabBar.MenuTabButton> newMenuTabButtons = new ArrayList<>();
-        for (Tab tab : tabs) {
-            newMenuTabButtons.add(new MenuTabBar.MenuTabButton(tabManager, tab, windowSizeX / count, 24));
-        }
-        TabNavigationBar newTabNavigationBar = new MenuTabBar(0, 0, windowSizeX, 24, tabManager, ImmutableList.copyOf(newMenuTabButtons), ImmutableList.copyOf(tabs));
-        newTabNavigationBar.selectTab(0, false);
-        return newTabNavigationBar;
+    public void openScreen(BetterEffectHudScreen screen) {
+        Minecraft.getInstance().setScreenAndShow(screen);
     }
 }
