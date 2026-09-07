@@ -7,6 +7,8 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.tabs.*;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import overcooked_industries.better_effect_hud.client.config.BetterEffectHudConfig;
 import overcooked_industries.better_effect_hud.client.config.BetterEffectHudConfigManager;
 import overcooked_industries.better_effect_hud.client.screens.elements.BetterEffectHudAlignment;
@@ -17,6 +19,7 @@ import java.lang.invoke.VarHandle;
 import java.util.ArrayList;
 import java.util.List;
 
+@NullMarked
 public abstract class BetterEffectHudScreen extends Screen {
     public BetterEffectHudScreen(Component title) {
         super(title);
@@ -79,18 +82,27 @@ public abstract class BetterEffectHudScreen extends Screen {
     }
 
     // TODO: Added screen reloading, but it doesnt work for tabpages of newTabNavigationBar. It just gets reset to the "page" property.
-    public TabNavigationBar newTabNavigationBar(Tab[] tabs, int page) {
-        int count = tabs.length;
+    public @Nullable TabNavigationBar newTabNavigationBar(Tab[] tabs, int initialTab) {
+        int tabCount = tabs.length;
         // TODO: Please add a better fix for this Exception.
-        if (page >= count) {return null;}
+        // Resolving the to-do entry involves deeply considering all approaches! The comments may be removed upon fix!
+
+        // Possible solutions: Default to the zero index?
+        // Change method signature to include a record argument that is validated before calling?
+        // We could also remove this validation entirely, since newTabNavigationBar.selectTab(initialTab, false) probably throws an ArrayIndexOutOfBoundsException anyway since accessing an illegal index automatically throws this Exception
+        // We could also throw a new IndexOutOfBoundsException(),
+        // BUT both of these approaches may be undesirable, as ArrayIndexOutOfBoundsException extends RuntimeException, which means it is allways unchecked
+
+        if (initialTab < 0 || initialTab >= tabCount) return null;
+
         int windowSizeX = Minecraft.getInstance().getWindow().getWidth() / Minecraft.getInstance().getWindow().getGuiScale();
         TabManager tabManager = new TabManager(this::addRenderableWidget, this::removeWidget);
         List<MenuTabBar.MenuTabButton> newMenuTabButtons = new ArrayList<>();
         for (Tab tab : tabs) {
-            newMenuTabButtons.add(new MenuTabBar.MenuTabButton(tabManager, tab, windowSizeX / count, 24));
+            newMenuTabButtons.add(new MenuTabBar.MenuTabButton(tabManager, tab, windowSizeX / tabCount, 24));
         }
         TabNavigationBar newTabNavigationBar = new MenuTabBar(0, 0, windowSizeX, 24, tabManager, ImmutableList.copyOf(newMenuTabButtons), ImmutableList.copyOf(tabs));
-        newTabNavigationBar.selectTab(page, false);
+        newTabNavigationBar.selectTab(initialTab, false);
         return newTabNavigationBar;
     }
 
