@@ -18,6 +18,7 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @NullMarked
 public abstract class BetterEffectHudScreen extends Screen {
@@ -26,19 +27,26 @@ public abstract class BetterEffectHudScreen extends Screen {
     }
 
     public static Button newButton(Component name, Button.OnPress onPress, int posX, int posY, int sizeX, int sizeY, BetterEffectHudAlignment alignment) {
-        int windowGuiScale = Minecraft.getInstance().getWindow().getGuiScale();
-        int windowSizeX = Minecraft.getInstance().getWindow().getWidth() / windowGuiScale;
-        int windowSizeY = Minecraft.getInstance().getWindow().getHeight() / windowGuiScale;
+        var window = Minecraft.getInstance().getWindow();
+
+        int windowGuiScale = window.getGuiScale();
+        int windowSizeX = window.getWidth() / windowGuiScale;
+        int windowSizeY = window.getHeight() / windowGuiScale;
+
         int buttonX = posX;
         int buttonY = posY;
         int alignX = alignment.posX;
         int alignY = alignment.posY;
+
+        //These casts are slightly more lossy than they could be
         float alignMultiplierX = (float) alignX / 2;
         float alignMultiplierY = (float) alignY / 2;
+
         buttonX -= (int) (sizeX * alignMultiplierX);
         buttonY -= (int) (sizeY * alignMultiplierY);
         buttonX += (int) (windowSizeX * alignMultiplierX);
         buttonY += (int) (windowSizeY * alignMultiplierY);
+
         return Button.builder(name, onPress).bounds(buttonX, buttonY, sizeX, sizeY).build();
     }
 
@@ -85,14 +93,35 @@ public abstract class BetterEffectHudScreen extends Screen {
     public @Nullable TabNavigationBar newTabNavigationBar(Tab[] tabs, int initialTab) {
         int tabCount = tabs.length;
         // TODO: Please add a better fix for this Exception.
+
         // Resolving the to-do entry involves deeply considering all approaches! The comments may be removed upon fix!
+        /*
+        Possible solutions:
+        Default to the zero index?
+        Change method signature to include a record argument that is validated before calling?
+        We could also remove this validation entirely, since newTabNavigationBar.selectTab(initialTab, false) probably throws an ArrayIndexOutOfBoundsException anyway since accessing an illegal index automatically throws this Exception
+        We could also throw a new IndexOutOfBoundsException(),
+        BUT both of these approaches may be undesirable, as ArrayIndexOutOfBoundsException extends RuntimeException, which means it is allways unchecked
+        Another option may be to change the return type to be Optional
 
-        // Possible solutions: Default to the zero index?
-        // Change method signature to include a record argument that is validated before calling?
-        // We could also remove this validation entirely, since newTabNavigationBar.selectTab(initialTab, false) probably throws an ArrayIndexOutOfBoundsException anyway since accessing an illegal index automatically throws this Exception
-        // We could also throw a new IndexOutOfBoundsException(),
-        // BUT both of these approaches may be undesirable, as ArrayIndexOutOfBoundsException extends RuntimeException, which means it is allways unchecked
+        A really solid approach may be to mark this method as private, and create a second method that actually calls addRenderableWidget() if (and only if the return value is not null)
+        along the lines of
+        private @Nullable TabNavigationBar newTabNavigationBar(Tab[] tabs, int initialTab) {
+            someLogic...
+            if (initialTab < 0 || initialTab >= tabCount) return null;
+            someLogic...
+            return new MenuTabBar(...);
+        }
 
+        public boolean addTabNavigationBar(Tab[] tabs, int initialTab) {
+            if (initialTab < 0 || initialTab >= tabCount) return false;
+            addRenderableWidget(newTabNavigationBar(Tab[] tabs, int initialTab));
+            return true;
+        }
+
+         */
+
+        // RETURNING NULL IS ABSOLUTELY NOT AN OPTION AS IT WILL CAUSE A NULL POINTER EXCEPTION
         if (initialTab < 0 || initialTab >= tabCount) return null;
 
         int windowSizeX = Minecraft.getInstance().getWindow().getWidth() / Minecraft.getInstance().getWindow().getGuiScale();

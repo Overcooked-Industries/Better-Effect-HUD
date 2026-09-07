@@ -24,8 +24,8 @@ public class BetterEffectHudConfig {
     public Boolean enablePotency = false;
     public BetterEffectHudAlignment timerPos = BetterEffectHudAlignment.BOTTOM_MIDDLE;
     public BetterEffectHudAlignment potencyPos = BetterEffectHudAlignment.TOP_RIGHT;
-    public int timerColor = 0x000000AA;
-    public int potencyColor = 0x000000AA;
+    public int timerColor =   0x00_00_00_AA;
+    public int potencyColor = 0x00_00_00_AA;
     public Boolean autoTimerColor = true;
     public Boolean autoPotencyColor = true;
     public double timerSize = 1.0;

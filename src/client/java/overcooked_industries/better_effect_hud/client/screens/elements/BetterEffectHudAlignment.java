@@ -10,9 +10,9 @@ public enum BetterEffectHudAlignment {
     BOTTOM_LEFT(0, 2),
     BOTTOM_MIDDLE(1, 2),
     BOTTOM_RIGHT(2, 2);
+
     public final int posX;
     public final int posY;
-
 
     BetterEffectHudAlignment(int posX, int posY) {
         this.posX = posX;

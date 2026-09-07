@@ -3,6 +3,7 @@ package overcooked_industries.better_effect_hud.client.config;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.fabricmc.loader.api.FabricLoader;
+import overcooked_industries.better_effect_hud.BetterEffectHUD;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -22,6 +23,8 @@ public class BetterEffectHudConfigManager {
             try (Reader reader = Files.newBufferedReader(PATH)) {
                 return GSON.fromJson(reader, BetterEffectHudConfig.class);
             } catch (IOException e) {
+                BetterEffectHUD.LOGGER.error("Failed to open configuration file at {}!", PATH);
+                //noinspection CallToPrintStackTrace
                 e.printStackTrace();
             }
         }
@@ -35,6 +38,9 @@ public class BetterEffectHudConfigManager {
         try (Writer writer = Files.newBufferedWriter(PATH)) {
             GSON.toJson(config, writer);
         } catch (IOException e) {
+            //noinspection LoggingSimilarMessage
+            BetterEffectHUD.LOGGER.error("Failed to open configuration file at {}!", PATH);
+            //noinspection CallToPrintStackTrace
             e.printStackTrace();
         }
     }
