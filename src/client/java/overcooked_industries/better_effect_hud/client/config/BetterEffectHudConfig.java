@@ -24,12 +24,12 @@ public class BetterEffectHudConfig {
     public Boolean enablePotency = false;
     public BetterEffectHudAlignment timerPos = BetterEffectHudAlignment.BOTTOM_MIDDLE;
     public BetterEffectHudAlignment potencyPos = BetterEffectHudAlignment.TOP_RIGHT;
-    public Integer timerColor = 0x000000AA;
-    public Integer potencyColor = 0x000000AA;
+    public int timerColor = 0x000000AA;
+    public int potencyColor = 0x000000AA;
     public Boolean autoTimerColor = true;
     public Boolean autoPotencyColor = true;
-    public Double timerSize = 1.0;
-    public Double potencySize = 1.0;
+    public double timerSize = 1.0;
+    public double potencySize = 1.0;
 
     //Duration Bar
     public Boolean enableDurationBar = false;
@@ -40,5 +40,5 @@ public class BetterEffectHudConfig {
 
     //Position
     public BetterEffectHudAlignment hudAlignment = BetterEffectHudAlignment.TOP_RIGHT;
-    public Double hudSize = 1.0;
+    public double hudSize = 1.0;
 }

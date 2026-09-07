@@ -44,14 +44,15 @@ public abstract class BetterEffectHudScreen extends Screen {
     //From this context, we cannot do much, except delegate the responsibility of dealing with Exceptions to the caller (since providing faulty arguments is on the caller)
     public static Button newToggleButton(Component name, int posX, int posY, int sizeX, int sizeY, BetterEffectHudAlignment alignment, String field) throws NoSuchFieldException, IllegalAccessException {
         //Horrible hacks due to lambda
+        var config = BetterEffectHudConfig.getInstance();
         VarHandle handle = MethodHandles.lookup().findVarHandle(BetterEffectHudConfig.class, field, Boolean.class);
 
-        boolean isOn = ((Boolean) handle.get(BetterEffectHudConfig.getInstance()));
+        boolean isOn = (boolean) handle.get(config);
 
         var offComponent = Component.translatable("better_effect_hud.button.toggle.off");
         var onComponent = Component.translatable("better_effect_hud.button.toggle.on");
 
-        Component stateComponent =  isOn ? onComponent : offComponent;
+        Component stateComponent = isOn ? onComponent : offComponent;
 
         return BetterEffectHudScreen.newButton(Component.literal(name.getString() + stateComponent.getString()), (btn) -> {
             //Dirty VarHandle hacks
@@ -59,10 +60,11 @@ public abstract class BetterEffectHudScreen extends Screen {
             //We can get the instance of the singleton and toggle a value by direct assignment like BetterEffectHudConfig.getInstance().enableMod = true, but we unfortuantely cannot tell what field has been passed off Boolean
             //Another solution would be adding a toggle method to the class itself, which would operate on a massive switch statement to set the appropriate field based on a String
             //The toggle method wouldn't be able to outsource the "clean" solution without itself including dirty VarHandle hacks though
-            handle.set(BetterEffectHudConfig.getInstance(), !((Boolean) handle.get(BetterEffectHudConfig.getInstance())));
+            handle.set(config, !(boolean) handle.get(config));
 
             BetterEffectHudConfigManager.serialize();
-            Minecraft.getInstance().gui.setScreen(Minecraft.getInstance().gui.screen());        }, posX, posY, sizeX, sizeY, alignment);
+            Minecraft.getInstance().gui.setScreen(Minecraft.getInstance().gui.screen());
+        }, posX, posY, sizeX, sizeY, alignment);
     }
 
     public static BetterEffectHudSlider newSlider(Component title, int posX, int posY, int sizeX, int sizeY) {
