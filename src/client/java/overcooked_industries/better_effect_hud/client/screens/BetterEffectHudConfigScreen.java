@@ -30,6 +30,7 @@ public class BetterEffectHudConfigScreen implements ModMenuApi {
         };
     }
 
+    //TODO: Move these helper classes out into their own package!!!!!!!
     private class GeneralTab extends GridLayoutTab {
         private static final Component TITLE = Component.literal("General Settings");
 
