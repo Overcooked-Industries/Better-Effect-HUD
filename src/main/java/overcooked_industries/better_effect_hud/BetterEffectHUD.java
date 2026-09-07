@@ -7,6 +7,10 @@ import net.minecraft.resources.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/*
+TODO: Remove this class? Discuss!
+We do not really need common code as of now, and MOD_ID, id(), as well as LOGGER may be moved to the Client ModInitializer
+ */
 public class BetterEffectHUD implements ModInitializer {
 	public static final String MOD_ID = "better_effect_hud";
 
