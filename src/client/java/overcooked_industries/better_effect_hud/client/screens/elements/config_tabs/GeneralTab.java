@@ -8,7 +8,7 @@ import overcooked_industries.better_effect_hud.client.screens.BetterEffectHudScr
 import overcooked_industries.better_effect_hud.client.screens.elements.BetterEffectHudAlignment;
 
 public class GeneralTab extends GridLayoutTab {
-    private static final Component TITLE = Component.literal("General Settings");
+    private static final Component TITLE = Component.translatable("better_effect_hud.hud.category.general");
 
     public GeneralTab(Screen parent) {
         super(TITLE);

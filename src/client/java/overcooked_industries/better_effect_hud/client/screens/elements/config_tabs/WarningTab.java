@@ -7,7 +7,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
 public class WarningTab extends GridLayoutTab {
-    private static final Component TITLE = Component.literal("Vignette Warning");
+    private static final Component TITLE = Component.translatable("better_effect_hud.hud.category.warning");
 
     public WarningTab(Screen parent) {
         super(TITLE);

@@ -1,6 +1,11 @@
 {
   "better_effect_hud.hud.button.toggle.off": ": §4OFF§r",
   "better_effect_hud.hud.button.toggle.on": ": §aON§r",
+  "better_effect_hud.hud.category.general": "General Settings",
+  "better_effect_hud.hud.category.info": "Timer & Potency",
+  "better_effect_hud.hud.category.duration_bar": "Duration Bar",
+  "better_effect_hud.hud.category.warning": "Vignette Warning",
+  "better_effect_hud.hud.category.position": "Position & Size",
   "better_effect_hud.hud.alignment.short.h.0": "L",
   "better_effect_hud.hud.alignment.short.h.1": "M",
   "better_effect_hud.hud.alignment.short.h.2": "R",

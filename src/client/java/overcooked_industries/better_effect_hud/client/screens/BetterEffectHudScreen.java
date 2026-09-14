@@ -26,7 +26,7 @@ public abstract class BetterEffectHudScreen extends Screen {
         super(title);
     }
 
-    public static BetterEffectHudAlignment[] betterEffectHudAlignments = new BetterEffectHudAlignment[]{
+    public static BetterEffectHudAlignment[] betterEffectHudAlignments = new BetterEffectHudAlignment[] {
             BetterEffectHudAlignment.TOP_LEFT,
             BetterEffectHudAlignment.TOP_MIDDLE,
             BetterEffectHudAlignment.TOP_RIGHT,
@@ -89,6 +89,33 @@ public abstract class BetterEffectHudScreen extends Screen {
         }, posX, posY, sizeX, sizeY, alignment);
     }
 
+    public static List<Button> newAlignmentButtons(int posX, int posY, int sizeX, int sizeY, String field, Screen screen, Character color) throws NoSuchFieldException, IllegalAccessException {
+        List<Button> out = new ArrayList<>();
+
+
+        VarHandle handle = MethodHandles.lookup().findVarHandle(BetterEffectHudConfig.class, field, BetterEffectHudAlignment.class);
+        BetterEffectHudAlignment hudAlignmentValue = (BetterEffectHudAlignment) handle.get(BetterEffectHudConfigManager.config);
+
+        for (BetterEffectHudAlignment alignment : BetterEffectHudConfigScreen.betterEffectHudAlignments) {
+            String colorPrefix = "";
+            if (hudAlignmentValue == alignment) {colorPrefix = "§" + color + "§l§n";}
+            out.add(BetterEffectHudScreen.newButton(
+                    Component.literal(
+                            colorPrefix +
+                                    Component.translatable("better_effect_hud.hud.alignment.short.v." + alignment.posY).getString() +
+                                    Component.translatable("better_effect_hud.hud.alignment.short.h." + alignment.posX).getString()
+                    ),
+                    (btn) -> {
+                        handle.set(BetterEffectHudConfigManager.config, (BetterEffectHudAlignment) alignment);
+                        BetterEffectHudConfigManager.serialize();
+                        Minecraft.getInstance().gui.setScreen(screen);
+                    },
+                    posX + alignment.posX * sizeX, posY + alignment.posY * sizeY, sizeX, sizeY,
+                    BetterEffectHudAlignment.TOP_LEFT));
+        }
+        return out;
+    }
+
     public static BetterEffectHudSlider newSlider(Component title, int posX, int posY, int sizeX, int sizeY) {
         return new BetterEffectHudSlider(
                 posX,
@@ -100,7 +127,6 @@ public abstract class BetterEffectHudScreen extends Screen {
         );
     }
 
-    // TODO: Added screen reloading, but it doesnt work for tabpages of newTabNavigationBar. It just gets reset to the "page" property.
     public @Nullable TabNavigationBar newTabNavigationBar(Tab[] tabs, int initialTab) {
         int tabCount = tabs.length;
         // TODO: Please add a better fix for this Exception.
