@@ -26,12 +26,23 @@ public abstract class BetterEffectHudScreen extends Screen {
         super(title);
     }
 
+    public static BetterEffectHudAlignment[] betterEffectHudAlignments = new BetterEffectHudAlignment[]{
+            BetterEffectHudAlignment.TOP_LEFT,
+            BetterEffectHudAlignment.TOP_MIDDLE,
+            BetterEffectHudAlignment.TOP_RIGHT,
+            BetterEffectHudAlignment.MIDDLE_LEFT,
+            BetterEffectHudAlignment.MIDDLE_MIDDLE,
+            BetterEffectHudAlignment.MIDDLE_RIGHT,
+            BetterEffectHudAlignment.BOTTOM_LEFT,
+            BetterEffectHudAlignment.BOTTOM_MIDDLE,
+            BetterEffectHudAlignment.BOTTOM_RIGHT,
+    };
+
     public static Button newButton(Component name, Button.OnPress onPress, int posX, int posY, int sizeX, int sizeY, BetterEffectHudAlignment alignment) {
         var window = Minecraft.getInstance().getWindow();
 
-        int windowGuiScale = window.getGuiScale();
-        int windowSizeX = window.getWidth() / windowGuiScale;
-        int windowSizeY = window.getHeight() / windowGuiScale;
+        int windowSizeX = window.getGuiScaledWidth();
+        int windowSizeY = window.getGuiScaledHeight();
 
         int buttonX = posX;
         int buttonY = posY;
@@ -53,15 +64,15 @@ public abstract class BetterEffectHudScreen extends Screen {
     //It is the caller's responsibility to call this method correctly, hence we throw an exception if that contract is not fulfilled
     //If the field being accessed exists and is modifiable without much effort, this method is guaranteed to work correctly
     //From this context, we cannot do much, except delegate the responsibility of dealing with Exceptions to the caller (since providing faulty arguments is on the caller)
-    public static Button newToggleButton(Component name, int posX, int posY, int sizeX, int sizeY, BetterEffectHudAlignment alignment, String field) throws NoSuchFieldException, IllegalAccessException {
+    public static Button newToggleButton(Component name, int posX, int posY, int sizeX, int sizeY, BetterEffectHudAlignment alignment, String field, Screen screen) throws NoSuchFieldException, IllegalAccessException {
         //Horrible hacks due to lambda
         var config = BetterEffectHudConfig.getInstance();
         VarHandle handle = MethodHandles.lookup().findVarHandle(BetterEffectHudConfig.class, field, Boolean.class);
 
         boolean isOn = (boolean) handle.get(config);
 
-        var offComponent = Component.translatable("better_effect_hud.button.toggle.off");
-        var onComponent = Component.translatable("better_effect_hud.button.toggle.on");
+        var offComponent = Component.translatable("better_effect_hud.hud.button.toggle.off");
+        var onComponent = Component.translatable("better_effect_hud.hud.button.toggle.on");
 
         Component stateComponent = isOn ? onComponent : offComponent;
 
@@ -74,7 +85,7 @@ public abstract class BetterEffectHudScreen extends Screen {
             handle.set(config, !(boolean) handle.get(config));
 
             BetterEffectHudConfigManager.serialize();
-            Minecraft.getInstance().gui.setScreen(Minecraft.getInstance().gui.screen());
+            Minecraft.getInstance().gui.setScreen(screen);
         }, posX, posY, sizeX, sizeY, alignment);
     }
 
@@ -124,7 +135,7 @@ public abstract class BetterEffectHudScreen extends Screen {
         // RETURNING NULL IS ABSOLUTELY NOT AN OPTION AS IT WILL CAUSE A NULL POINTER EXCEPTION
         if (initialTab < 0 || initialTab >= tabCount) return null;
 
-        int windowSizeX = Minecraft.getInstance().getWindow().getWidth() / Minecraft.getInstance().getWindow().getGuiScale();
+        int windowSizeX = Minecraft.getInstance().getWindow().getGuiScaledWidth();
         TabManager tabManager = new TabManager(this::addRenderableWidget, this::removeWidget);
         List<MenuTabBar.MenuTabButton> newMenuTabButtons = new ArrayList<>();
         for (Tab tab : tabs) {

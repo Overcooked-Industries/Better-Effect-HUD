@@ -1,4 +1,16 @@
 {
-  "better_effect_hud.button.toggle.off": ": §4OFF§r",
-  "better_effect_hud.button.toggle.on": ": §aON§r"
+  "better_effect_hud.hud.button.toggle.off": ": §4OFF§r",
+  "better_effect_hud.hud.button.toggle.on": ": §aON§r",
+  "better_effect_hud.hud.alignment.short.h.0": "L",
+  "better_effect_hud.hud.alignment.short.h.1": "M",
+  "better_effect_hud.hud.alignment.short.h.2": "R",
+  "better_effect_hud.hud.alignment.short.v.0": "T",
+  "better_effect_hud.hud.alignment.short.v.1": "M",
+  "better_effect_hud.hud.alignment.short.v.2": "B",
+  "better_effect_hud.hud.alignment.long.h.0": "Left",
+  "better_effect_hud.hud.alignment.long.h.1": "Middle",
+  "better_effect_hud.hud.alignment.long.h.2": "Right",
+  "better_effect_hud.hud.alignment.long.v.0": "Top",
+  "better_effect_hud.hud.alignment.long.v.1": "Middle",
+  "better_effect_hud.hud.alignment.long.v.2": "Bottom"
 }

@@ -1,0 +1,22 @@
+package overcooked_industries.better_effect_hud.client.screens;
+
+import com.terraformersmc.modmenu.api.ConfigScreenFactory;
+import com.terraformersmc.modmenu.api.ModMenuApi;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.tabs.GridLayoutTab;
+import net.minecraft.client.gui.components.tabs.Tab;
+import net.minecraft.client.gui.layouts.GridLayout;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+import overcooked_industries.better_effect_hud.client.config.BetterEffectHudConfigManager;
+import overcooked_industries.better_effect_hud.client.screens.elements.BetterEffectHudAlignment;
+
+
+public class BetterEffectHudModMenuInitializer implements ModMenuApi {
+
+    @Override
+    public ConfigScreenFactory<?> getModConfigScreenFactory() {
+        return (Screen parent) -> new BetterEffectHudConfigScreen(Component.literal("Config Screen"), 0, parent);
+    }
+
+}
