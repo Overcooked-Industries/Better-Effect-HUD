@@ -7,6 +7,13 @@ import overcooked_industries.better_effect_hud.client.config.BetterEffectHudConf
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 
+//TODO: Use a Virtual Value system
+// You have to store an addition value that represents the value you calculate and store
+// This one will have to be updated alongside the canonical value inside setValueFromMouse()
+// This will be used for serialization and deserialization
+// You'll have to additionally track the current value but only for the animation
+// Look into thresholds and discrete-s
+// the rest you'll figure out on your own ;)
 public class BetterEffectHudIntSlider extends AbstractSliderButton {
     String text;
     VarHandle handle;
@@ -14,15 +21,11 @@ public class BetterEffectHudIntSlider extends AbstractSliderButton {
     int max;
 
     public BetterEffectHudIntSlider(int x, int y, int width, int height, String text, String field, int min, int max) throws NoSuchFieldException, IllegalAccessException {
-        VarHandle handle = MethodHandles.lookup().findVarHandle(BetterEffectHudConfig.class, field, Integer.class);
-        this.handle = handle;
+        super(x, y, width, height, Component.literal(""),  ((double) MethodHandles.lookup().findVarHandle(BetterEffectHudConfig.class, field, Integer.class).get(BetterEffectHudConfig.getInstance()) - min) / (max - min));
+        this.handle = MethodHandles.lookup().findVarHandle(BetterEffectHudConfig.class, field, Integer.class);
         this.text = text;
         this.min = min;
         this.max = max;
-        System.out.println((int) handle.get(BetterEffectHudConfig.getInstance()));
-
-
-        super(x, y, width, height, Component.literal(""),  ((double) handle.get(BetterEffectHudConfig.getInstance()) - min) / (max - min));
         updateMessage();
     }
 
@@ -33,7 +36,6 @@ public class BetterEffectHudIntSlider extends AbstractSliderButton {
 
     @Override
     protected void applyValue() {
-        System.out.println(value);
         handle.set(BetterEffectHudConfig.getInstance(), (int) Math.floor(min + (max - min) * this.value));
         BetterEffectHudConfig.serialize();
     }
