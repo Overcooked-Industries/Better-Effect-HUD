@@ -6,6 +6,7 @@
   "better_effect_hud.hud.category.duration_bar": "Duration Bar",
   "better_effect_hud.hud.category.warning": "Vignette Warning",
   "better_effect_hud.hud.category.position": "Position & Size",
+  "better_effect_hud.hud.category.experimental": "Experimental",
   "better_effect_hud.hud.alignment.short.h.0": "L",
   "better_effect_hud.hud.alignment.short.h.1": "M",
   "better_effect_hud.hud.alignment.short.h.2": "R",
@@ -17,5 +18,13 @@
   "better_effect_hud.hud.alignment.long.h.2": "Right",
   "better_effect_hud.hud.alignment.long.v.0": "Top",
   "better_effect_hud.hud.alignment.long.v.1": "Middle",
-  "better_effect_hud.hud.alignment.long.v.2": "Bottom"
+  "better_effect_hud.hud.alignment.long.v.2": "Bottom",
+  "better_effect_hud.hud.category.general.toggle_button.enable_mod": "Enable Mod",
+  "better_effect_hud.hud.category.general.toggle_button.enable_experimental": "Experimental Options",
+  "better_effect_hud.hud.category.info.unit": "Unit",
+  "better_effect_hud.hud.category.info.min": "Min",
+  "better_effect_hud.hud.category.info.max": "Max",
+  "better_effect_hud.hud.category.info.decimal": "Decimal",
+  "better_effect_hud.hud.category.position.toggle_button.stack_y": "Stack Vertical",
+  "better_effect_hud.hud.category.experimental.toggle_button.experimental_enable_custom_timer_size": "Enable Custom Timer Size"
 }

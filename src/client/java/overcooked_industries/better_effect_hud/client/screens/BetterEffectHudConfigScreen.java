@@ -4,28 +4,29 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.tabs.Tab;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import overcooked_industries.better_effect_hud.client.config.BetterEffectHudConfig;
 import overcooked_industries.better_effect_hud.client.screens.elements.BetterEffectHudAlignment;
 import overcooked_industries.better_effect_hud.client.screens.elements.config_tabs.*;
 
-public class BetterEffectHudConfigScreen extends BetterEffectHudScreen {
+import java.util.ArrayList;
+import java.util.List;
+
+public class BetterEffectHudConfigScreen extends BetterEffectHudAbstractTabScreen {
 
     public BetterEffectHudConfigScreen(Component title, int page, Screen parent) {
-        super(title);
-        this.page = page;
-        this.parent = parent;
+        super(title, page, parent);
     }
 
-    int page;
-    Screen parent;
-
     protected void init() {
-        addRenderableWidget(newTabNavigationBar(new Tab[] {
-                new GeneralTab(parent),
-                new InfoTab(parent),
-                new DurationBarTab(parent),
-                new WarningTab(parent),
-                new PositionTab(parent),
-        }, page));
-        addRenderableWidget(BetterEffectHudScreen.newButton(Component.translatable("gui.done"), (btn) -> Minecraft.getInstance().setScreenAndShow(parent), 0, -25, 200, 21, BetterEffectHudAlignment.BOTTOM_MIDDLE));
+        List<Tab> tabs = new ArrayList<>();
+        tabs.add(new GeneralTab(parent, Component.translatable("better_effect_hud.hud.category.general"), 0));
+        tabs.add(new InfoTab(parent, Component.translatable("better_effect_hud.hud.category.info"), 1));
+        tabs.add(new DurationBarTab(parent, Component.translatable("better_effect_hud.hud.category.duration_bar"), 2));
+        tabs.add(new WarningTab(parent, Component.translatable("better_effect_hud.hud.category.warning"), 3));
+        tabs.add(new PositionTab(parent, Component.translatable("better_effect_hud.hud.category.position"), 4));
+        if (BetterEffectHudConfig.getInstance().enableExperimental) {tabs.add(new ExperimentalTab(parent, Component.translatable("better_effect_hud.hud.category.experimental"), 5));}
+
+        addRenderableWidget(newTabNavigationBar(this, tabs, page));
+        addRenderableWidget(BetterEffectHudAbstractScreen.newButton(Component.translatable("gui.done"), (btn) -> Minecraft.getInstance().setScreenAndShow(parent), 0, -25, 200, 21, BetterEffectHudAlignment.BOTTOM_MIDDLE, false));
     }
 }
