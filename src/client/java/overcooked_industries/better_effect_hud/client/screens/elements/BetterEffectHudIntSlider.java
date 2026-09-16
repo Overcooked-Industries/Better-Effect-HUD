@@ -13,6 +13,7 @@ import java.lang.invoke.VarHandle;
 // This will be used for serialization and deserialization
 // You'll have to additionally track the current value but only for the animation
 // Look into thresholds and discrete-s
+// Why do this? Simple: You lack precision when you don't do it this way! This is too lossy and cannot be released to production!
 // the rest you'll figure out on your own ;)
 public class BetterEffectHudIntSlider extends AbstractSliderButton {
     String text;
