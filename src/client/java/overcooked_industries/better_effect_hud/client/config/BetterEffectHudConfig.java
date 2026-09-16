@@ -10,6 +10,8 @@ import overcooked_industries.better_effect_hud.client.screens.elements.BetterEff
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -56,7 +58,16 @@ public class BetterEffectHudConfig {
         }
     }
 
+    //Anything below this comment may not use "instance"
+    //Use getInstance() instead
 
+    public static Object getField(String fieldName, Class<?> type) throws NoSuchFieldException, IllegalAccessException {
+        return varHandle(fieldName, type).get(getInstance());
+    }
+
+    public static VarHandle varHandle(String fieldName, Class<?> type) throws NoSuchFieldException, IllegalAccessException {
+        return MethodHandles.lookup().findVarHandle(BetterEffectHudConfig.class, fieldName, type);
+    }
 
     /// Settings for each Tab.
     //General

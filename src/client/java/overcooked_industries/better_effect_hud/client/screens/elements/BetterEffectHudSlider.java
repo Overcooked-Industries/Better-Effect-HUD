@@ -4,7 +4,6 @@ import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.network.chat.Component;
 import overcooked_industries.better_effect_hud.client.config.BetterEffectHudConfig;
 
-import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 
 public class BetterEffectHudSlider extends AbstractSliderButton {
@@ -14,7 +13,7 @@ public class BetterEffectHudSlider extends AbstractSliderButton {
     double max;
 
     public BetterEffectHudSlider(int x, int y, int width, int height, String text, String field, double min, double max) throws NoSuchFieldException, IllegalAccessException {
-        VarHandle handle = MethodHandles.lookup().findVarHandle(BetterEffectHudConfig.class, field, double.class);
+        VarHandle handle =  BetterEffectHudConfig.varHandle(field, double.class);
         this.handle = handle;
         this.text = text;
         this.min = min;

@@ -21,8 +21,8 @@ public class BetterEffectHudIntSlider extends AbstractSliderButton {
     int max;
 
     public BetterEffectHudIntSlider(int x, int y, int width, int height, String text, String field, int min, int max) throws NoSuchFieldException, IllegalAccessException {
-        super(x, y, width, height, Component.literal(""),  ((double) MethodHandles.lookup().findVarHandle(BetterEffectHudConfig.class, field, Integer.class).get(BetterEffectHudConfig.getInstance()) - min) / (max - min));
-        this.handle = MethodHandles.lookup().findVarHandle(BetterEffectHudConfig.class, field, Integer.class);
+        super(x, y, width, height, Component.literal(""),  (double) ((int) BetterEffectHudConfig.getField(field, Integer.class) - min) / (max - min));
+        this.handle = BetterEffectHudConfig.varHandle(field, Integer.class);
         this.text = text;
         this.min = min;
         this.max = max;

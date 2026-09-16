@@ -15,7 +15,6 @@ import overcooked_industries.better_effect_hud.client.screens.elements.BetterEff
 import overcooked_industries.better_effect_hud.client.screens.elements.BetterEffectHudLabel;
 import overcooked_industries.better_effect_hud.client.screens.elements.BetterEffectHudSlider;
 
-import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +66,7 @@ public abstract class BetterEffectHudAbstractScreen extends Screen {
     //If the field being accessed exists and is modifiable without much effort, this method is guaranteed to work correctly
     //From this context, we cannot do much, except delegate the responsibility of dealing with Exceptions to the caller (since providing faulty arguments is on the caller)
     public static Button newToggleButton(Component name, int posX, int posY, int sizeX, int sizeY, BetterEffectHudAlignment alignment, String field, Screen screen, boolean disabled) throws NoSuchFieldException, IllegalAccessException {
-        VarHandle handle = MethodHandles.lookup().findVarHandle(BetterEffectHudConfig.class, field, Boolean.class);
+        VarHandle handle = BetterEffectHudConfig.varHandle(field, Boolean.class);
 
         boolean isOn = (boolean) handle.get(BetterEffectHudConfig.getInstance());
 
@@ -93,7 +92,7 @@ public abstract class BetterEffectHudAbstractScreen extends Screen {
         List<Button> out = new ArrayList<>();
 
 
-        VarHandle handle = MethodHandles.lookup().findVarHandle(BetterEffectHudConfig.class, field, BetterEffectHudAlignment.class);
+        VarHandle handle = BetterEffectHudConfig.varHandle(field, BetterEffectHudAlignment.class);
         BetterEffectHudAlignment hudAlignmentValue = (BetterEffectHudAlignment) handle.get(BetterEffectHudConfig.getInstance());
 
         for (BetterEffectHudAlignment alignment : BetterEffectHudConfigScreen.betterEffectHudAlignments) {
@@ -143,7 +142,7 @@ public abstract class BetterEffectHudAbstractScreen extends Screen {
     }
 
     public static Checkbox newCheckbox(Component title, int posX, int posY, String field, Screen screen) throws NoSuchFieldException, IllegalAccessException {
-        VarHandle handle = MethodHandles.lookup().findVarHandle(BetterEffectHudConfig.class, field, Boolean.class);
+        VarHandle handle = BetterEffectHudConfig.varHandle(field, Boolean.class);
         Boolean selected = (Boolean) handle.get(BetterEffectHudConfig.getInstance());
 
         return Checkbox.builder(title, Minecraft.getInstance().font).pos(posX, posY).selected(selected).onValueChange((checkbox, value) -> {handle.set(BetterEffectHudConfig.getInstance(), (Boolean) !selected); BetterEffectHudConfig.serialize(); Minecraft.getInstance().gui.setScreen(screen);}).build();
