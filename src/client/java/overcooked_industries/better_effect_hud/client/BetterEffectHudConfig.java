@@ -1,4 +1,4 @@
-package overcooked_industries.better_effect_hud.client.config;
+package overcooked_industries.better_effect_hud.client;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -32,7 +32,7 @@ public class BetterEffectHudConfig {
     /**
      * <p>Deserializes the config instance</p>
      * <strong>Old instance WILL be overridden!</strong>
-     * <p>Hic sunt dracones!</p>
+     * <p>Here be dragons!</p>
      */
     public static void deserialize() {
         // TODO: Better Exception Handling
@@ -88,7 +88,7 @@ public class BetterEffectHudConfig {
     public int timerMinUnit = 0;
     public int timerMaxUnit = 6;
     public Integer timerDecimalCount = 0;
-    public Boolean[] timerUseDecimals = new Boolean[]{false, false, false, false, false, false, false};
+    public Boolean[] timerUseDecimals = new Boolean[]{true, true, true, true, true, true, true};
     //Duration Bar
     public Boolean enableDurationBar = false;
     //Warning

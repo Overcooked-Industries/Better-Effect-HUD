@@ -2,9 +2,8 @@ package overcooked_industries.better_effect_hud.client.screens.elements;
 
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.network.chat.Component;
-import overcooked_industries.better_effect_hud.client.config.BetterEffectHudConfig;
+import overcooked_industries.better_effect_hud.client.BetterEffectHudConfig;
 
-import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 
 //TODO: Use a Virtual Value system

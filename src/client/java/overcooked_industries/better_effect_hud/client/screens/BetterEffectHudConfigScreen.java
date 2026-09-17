@@ -4,7 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.tabs.Tab;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import overcooked_industries.better_effect_hud.client.config.BetterEffectHudConfig;
+import overcooked_industries.better_effect_hud.client.BetterEffectHudConfig;
 import overcooked_industries.better_effect_hud.client.screens.elements.BetterEffectHudAlignment;
 import overcooked_industries.better_effect_hud.client.screens.elements.config_tabs.*;
 

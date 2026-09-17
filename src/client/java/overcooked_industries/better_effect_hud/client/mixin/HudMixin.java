@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import overcooked_industries.better_effect_hud.client.config.BetterEffectHudConfig;
+import overcooked_industries.better_effect_hud.client.BetterEffectHudConfig;
 import overcooked_industries.better_effect_hud.client.screens.elements.BetterEffectHudAlignment;
 
 import java.util.Collection;
@@ -123,25 +123,27 @@ public class HudMixin {
     }
 
     private String getDuration(MobEffectInstance mobEffectInstance) {
+        if (mobEffectInstance.isInfiniteDuration()) {return Component.translatable("effect.duration.infinite").getString();}
         double time = mobEffectInstance.getDuration();
-        String suffix = "t";
+        int suffixId = 0;
+        String suffix;
         boolean useMs = BetterEffectHudConfig.getInstance().timerUseMs;
         int minUnit = BetterEffectHudConfig.getInstance().timerMinUnit;
         int maxUnit = BetterEffectHudConfig.getInstance().timerMaxUnit;
 
         //This is some bullsh*t code, please make a better alternative
         if ((time >= 20 || minUnit > 0) && maxUnit > 0) {
-            time /= 20; suffix = "s";
+            time /= 20; suffixId = 1;
             if ((time >= 60 || minUnit > 1) && maxUnit > 1) {
-                time /= 60; suffix = "m";
+                time /= 60; suffixId = 2;
                 if ((time >= 60 || minUnit > 2) && maxUnit > 2) {
-                    time /= 60; suffix = "h";
+                    time /= 60; suffixId = 3;
                     if ((time >= 24 || minUnit > 3) && maxUnit > 3) {
-                        time /= 24; suffix = "d";
+                        time /= 24; suffixId = 4;
                         if ((time >= 7 || minUnit > 4) && maxUnit > 4) {
-                            time /= 7; suffix = "w";
-                            if ((time >= 7 || minUnit > 5) && maxUnit > 5) {
-                                time /= 7; suffix = "y";
+                            time /= 7; suffixId = 5;
+                            if ((time >= 52.1429 || minUnit > 5) && maxUnit > 5) {
+                                time /= 52.1429; suffixId = 6;
                             }
                         }
                     }
@@ -149,14 +151,14 @@ public class HudMixin {
             }
         }
 
-        if (suffix == "t" && useMs) {
+        suffix = new String[]{"t", "s", "m", "h", "d", "w", "y"}[suffixId];
+        if (suffixId == 0 && useMs) {
             suffix = "ms";
             time /= 20;
             time *= 1000;
         }
-
-        if (mobEffectInstance.isInfiniteDuration()) {return Component.translatable("effect.duration.infinite").getString();}
-        return String.format("%.1f", time) + suffix;
+        if (BetterEffectHudConfig.getInstance().timerUseDecimals[suffixId]) return String.format("%." + BetterEffectHudConfig.getInstance().timerDecimalCount + "f", time) + suffix;
+        return String.format("%.0f", time) + suffix;
     }
     private String getPotency(MobEffectInstance mobEffectInstance) {
         int potency = mobEffectInstance.getAmplifier();
