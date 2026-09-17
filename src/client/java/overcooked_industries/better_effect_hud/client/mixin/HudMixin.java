@@ -11,19 +11,24 @@ import net.minecraft.client.gui.Hud;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import overcooked_industries.better_effect_hud.client.BetterEffectHudConfig;
 import overcooked_industries.better_effect_hud.client.screens.elements.BetterEffectHudAlignment;
 
 import java.util.Collection;
+import java.util.Objects;
 
 @Mixin(Hud.class) //TODO: Make this Code more readable and just better.
-public class HudMixin {
+public abstract class HudMixin {
+    @Unique
+    public int warningColor;
     @Shadow
     @Final
     private Minecraft minecraft;
@@ -80,6 +85,7 @@ public class HudMixin {
             posX = getSecondaryEffectPos(hudAlignmentX, isBeneficial, false);
             posY = getPrimaryEffectPos(hudAlignmentY, count, maxCount, true);
         }
+        warningColor = effect.value().getColor();
 
         graphics.blitSprite(renderPipeline, location, posX + 3, posY + 3, width, height, color);
         graphics.pose().pushMatrix();
@@ -87,6 +93,11 @@ public class HudMixin {
         graphics.text(minecraft.font, getDuration(mobEffectInstance), (int) ((posX + 3) * guiUpscale), (int) ((posY + 3) * guiUpscale), 0xFFFFFFFF);
         graphics.text(minecraft.font, getPotency(mobEffectInstance), posX, posY + 16, BetterEffectHudConfig.getInstance().potencyColor);
         graphics.pose().popMatrix();
+    }
+    @WrapOperation(at = @At(value = "INVOKE", target = "Lnet/minecraft/util/ARGB;colorFromFloat(FFFF)I"), method = "extractVignette")
+    private int extractVignette(float alpha, float red, float green, float blue, Operation<Integer> original) {
+        return 0xFF00FF00;
+        //return (warningColor << 8) | 0x000000FF;
     }
 
     private int getPrimaryEffectPos(int hudAlignment, int count, int maxCount, boolean isY) {

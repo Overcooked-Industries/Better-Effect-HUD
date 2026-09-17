@@ -93,7 +93,7 @@ public class BetterEffectHudConfig {
     public Boolean enableDurationBar = false;
     //Warning
     public Boolean enableWarning = false;
-    public Identifier[] effectsIdentifiers = {Identifier.withDefaultNamespace("strength"), Identifier.withDefaultNamespace("speed")};
+    public Identifier[] effectWarningIdentifiers = {Identifier.withDefaultNamespace("strength"), Identifier.withDefaultNamespace("speed")};
     //Position
     public BetterEffectHudAlignment hudAlignment = BetterEffectHudAlignment.TOP_RIGHT;
     public Boolean stackY = false;
