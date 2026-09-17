@@ -36,7 +36,7 @@ public class BetterEffectHudIntSlider extends AbstractSliderButton {
 
     @Override
     protected void applyValue() {
-        handle.set(BetterEffectHudConfig.getInstance(), (int) Math.floor(min + (max - min) * this.value));
+        handle.set(BetterEffectHudConfig.getInstance(), (int) Math.round(min + (max - min) * this.value));
         BetterEffectHudConfig.serialize();
     }
 }
