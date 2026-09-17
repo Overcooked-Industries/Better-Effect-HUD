@@ -96,7 +96,10 @@ public abstract class HudMixin {
     }
     @WrapOperation(at = @At(value = "INVOKE", target = "Lnet/minecraft/util/ARGB;colorFromFloat(FFFF)I"), method = "extractVignette")
     private int extractVignette(float alpha, float red, float green, float blue, Operation<Integer> original) {
-        return 0xFF00FF00;
+        //Uses Blend mode ONE_MINUS_SRC_COLOR
+        //GL_ONE_MINUS_SRC_COLOR 0x301 or VK_BLEND_FACTOR_ONE_MINUS_SRC_COLOR 0x3 respectively
+        // Both use roughly the equation (1,1,1,1)−(Rs0kR,Gs0kG,Bs0kB,As0kA) (which is, of course, (1 - Rs0kR, 1 -  Gs0kG, 1 -  Bs0kB, 1 - As0kA)
+        return 3;
         //return (warningColor << 8) | 0x000000FF;
     }
 
