@@ -23,7 +23,6 @@ import overcooked_industries.better_effect_hud.client.BetterEffectHudConfig;
 import overcooked_industries.better_effect_hud.client.screens.elements.BetterEffectHudAlignment;
 
 import java.util.Collection;
-import java.util.Objects;
 
 @Mixin(Hud.class) //TODO: Make this Code more readable and just better.
 public abstract class HudMixin {
@@ -96,11 +95,31 @@ public abstract class HudMixin {
     }
     @WrapOperation(at = @At(value = "INVOKE", target = "Lnet/minecraft/util/ARGB;colorFromFloat(FFFF)I"), method = "extractVignette")
     private int extractVignette(float alpha, float red, float green, float blue, Operation<Integer> original) {
-        //Uses Blend mode ONE_MINUS_SRC_COLOR
-        //GL_ONE_MINUS_SRC_COLOR 0x301 or VK_BLEND_FACTOR_ONE_MINUS_SRC_COLOR 0x3 respectively
-        // Both use roughly the equation (1,1,1,1)−(Rs0kR,Gs0kG,Bs0kB,As0kA) (which is, of course, (1 - Rs0kR, 1 -  Gs0kG, 1 -  Bs0kB, 1 - As0kA)
-        return 3;
-        //return (warningColor << 8) | 0x000000FF;
+        return getBlendColor(ARGB.color(0xFF, warningColor), 0xFF_FF_FF_FF);
+    }
+
+    ///# Uses Blend mode ONE_MINUS_SRC_COLOR
+    ///### GL and VK respectively:
+    /// - GL_ONE_MINUS_SRC_COLOR 0x301
+    /// - VK_BLEND_FACTOR_ONE_MINUS_SRC_COLOR 0x3
+    int getBlendColor(int target, int baseColor) {
+        int baseA = ARGB.alpha(target);
+        int baseR = ARGB.red(baseColor);
+        int baseG = ARGB.green(baseColor);
+        int baseB = ARGB.blue(baseColor);
+
+        int targetR = ARGB.red(target);
+        int targetG = ARGB.green(target);
+        int targetB = ARGB.blue(target);
+
+        int resultR = baseR == 0 ? 0 : 0xFF - (targetR << 8 / baseR);
+        int resultG = baseG == 0 ? 0 : 0xFF - (targetG << 8 / baseG);
+        int resultB = baseB == 0 ? 0 : 0xFF - (targetB << 8 / baseB);
+
+        resultR = Math.clamp(resultR, 0, 0xFF);
+        resultG = Math.clamp(resultG, 0, 0xFF);
+        resultB = Math.clamp(resultB, 0, 0xFF);
+        return (baseA << 24) | (resultR << 16) | (resultG << 8) | resultB;
     }
 
     private int getPrimaryEffectPos(int hudAlignment, int count, int maxCount, boolean isY) {
