@@ -82,10 +82,10 @@ public class InfoTab extends BetterEffectHudAbstractTab {
                             Minecraft.getInstance().gui.setScreen(screen);
                         }, BetterEffectHudConfig.getInstance().timerUseDecimals[i]), 0, 0);
             }
-            layout.addChild(BetterEffectHudAbstractScreen.newLabel(Component.translatable("better_effect_hud.hud.category.info.unit"), 10, 170, 0xFFFFFFFF, false), 0, 0);
-            layout.addChild(BetterEffectHudAbstractScreen.newLabel(Component.translatable("better_effect_hud.hud.category.info.min"), 10, 187, 0xFFFFFFFF, false), 0, 0);
-            layout.addChild(BetterEffectHudAbstractScreen.newLabel(Component.translatable("better_effect_hud.hud.category.info.max"), 10, 204, 0xFFFFFFFF, false), 0, 0);
-            layout.addChild(BetterEffectHudAbstractScreen.newLabel(Component.translatable("better_effect_hud.hud.category.info.decimal"), 10, 221, 0xFFFFFFFF, false), 0, 0);
+            layout.addChild(BetterEffectHudAbstractScreen.newLabel(Component.translatable("better_effect_hud.hud.category.info.unit"), 10, 170, 0xFFFFFFFF, BetterEffectHudAlignment.TOP_LEFT), 0, 0);
+            layout.addChild(BetterEffectHudAbstractScreen.newLabel(Component.translatable("better_effect_hud.hud.category.info.min"), 10, 187, 0xFFFFFFFF, BetterEffectHudAlignment.TOP_LEFT), 0, 0);
+            layout.addChild(BetterEffectHudAbstractScreen.newLabel(Component.translatable("better_effect_hud.hud.category.info.max"), 10, 204, 0xFFFFFFFF, BetterEffectHudAlignment.TOP_LEFT), 0, 0);
+            layout.addChild(BetterEffectHudAbstractScreen.newLabel(Component.translatable("better_effect_hud.hud.category.info.decimal"), 10, 221, 0xFFFFFFFF, BetterEffectHudAlignment.TOP_LEFT), 0, 0);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             //No Exception will ever be thrown, since we know the enableMod field exists in the BetterEffectHudAlignment instance and is modifiable
             throw new RuntimeException(e);

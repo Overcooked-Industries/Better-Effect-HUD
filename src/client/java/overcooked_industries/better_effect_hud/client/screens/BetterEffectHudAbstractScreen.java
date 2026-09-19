@@ -1,19 +1,18 @@
 package overcooked_industries.better_effect_hud.client.screens;
 
 import com.google.common.collect.ImmutableList;
+import com.mojang.renderpearl.api.pipeline.RenderPipeline;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.components.tabs.*;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.UnknownNullability;
 import org.jspecify.annotations.NullMarked;
 import overcooked_industries.better_effect_hud.client.BetterEffectHudConfig;
-import overcooked_industries.better_effect_hud.client.screens.elements.BetterEffectHudAlignment;
-import overcooked_industries.better_effect_hud.client.screens.elements.BetterEffectHudIntSlider;
-import overcooked_industries.better_effect_hud.client.screens.elements.BetterEffectHudLabel;
-import overcooked_industries.better_effect_hud.client.screens.elements.BetterEffectHudSlider;
+import overcooked_industries.better_effect_hud.client.screens.elements.*;
 
 import java.lang.invoke.VarHandle;
 import java.util.ArrayList;
@@ -167,8 +166,12 @@ public abstract class BetterEffectHudAbstractScreen extends Screen {
         return newTabNavigationBar;
     }
 
-    public static BetterEffectHudLabel newLabel(Component title, int posX, int posY, int color, boolean centered) {
-        return new BetterEffectHudLabel(title, posX, posY, color, centered);
+    public static BetterEffectHudLabel newLabel(Component title, int posX, int posY, int color, BetterEffectHudAlignment alignment) {
+        return new BetterEffectHudLabel(title, posX, posY, color, alignment);
+    }
+
+    public static BetterEffectHudTexture newTexture(int posX, int posY, int width, int height, int color, RenderPipeline renderPipeline, Identifier texture) {
+        return new BetterEffectHudTexture(posX, posY, width, height, color, renderPipeline, texture);
     }
 
 

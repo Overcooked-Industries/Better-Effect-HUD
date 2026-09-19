@@ -4,7 +4,7 @@ import com.google.common.collect.Ordering;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
-import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.renderpearl.api.pipeline.RenderPipeline;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.Hud;
@@ -21,6 +21,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import overcooked_industries.better_effect_hud.client.BetterEffectHudConfig;
 import overcooked_industries.better_effect_hud.client.screens.elements.BetterEffectHudAlignment;
+import overcooked_industries.better_effect_hud.client.screens.elements.BetterEffectHudLabel;
 
 import java.util.Collection;
 
@@ -32,7 +33,7 @@ public abstract class HudMixin {
     @Final
     private Minecraft minecraft;
 
-    @WrapOperation(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V"), method = "extractEffects")
+    @WrapOperation(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;blitSprite(Lcom/mojang/renderpearl/api/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V"), method = "extractEffects")
     private void background(
             GuiGraphicsExtractor instance,
             RenderPipeline renderPipeline,
@@ -59,7 +60,7 @@ public abstract class HudMixin {
 
         graphics.blitSprite(renderPipeline, location, posX, posY, width, height);
     }
-    @WrapOperation(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIIII)V"), method = "extractEffects")
+    @WrapOperation(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;blitSprite(Lcom/mojang/renderpearl/api/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIIII)V"), method = "extractEffects")
     private void icon(
             GuiGraphicsExtractor instance,
             RenderPipeline renderPipeline,
@@ -89,8 +90,12 @@ public abstract class HudMixin {
         graphics.blitSprite(renderPipeline, location, posX + 3, posY + 3, width, height, color);
         graphics.pose().pushMatrix();
         graphics.pose().scale(guiDownscale, guiDownscale);
-        graphics.text(minecraft.font, getDuration(mobEffectInstance), (int) ((posX + 3) * guiUpscale), (int) ((posY + 3) * guiUpscale), 0xFFFFFFFF);
-        graphics.text(minecraft.font, getPotency(mobEffectInstance), posX, posY + 16, BetterEffectHudConfig.getInstance().potencyColor);
+        BetterEffectHudAlignment timerPos = BetterEffectHudConfig.getInstance().timerPos;
+        BetterEffectHudAlignment potencyPos = BetterEffectHudConfig.getInstance().potencyPos;
+        BetterEffectHudLabel timerLabel = new BetterEffectHudLabel(Component.literal(getDuration(mobEffectInstance)), (int) ((posX + 3 + 9 * (timerPos.posX)) * guiUpscale), (int) ((posY + 3 + 9 * (timerPos.posY)) * guiUpscale), 0xFFFFFFFF, timerPos);
+        BetterEffectHudLabel potencyLabel = new BetterEffectHudLabel(Component.literal(getPotency(mobEffectInstance)), (int) ((posX + 3 + 9 * (potencyPos.posX)) * guiUpscale), (int) ((posY + 3 + 9 * (potencyPos.posY)) * guiUpscale), 0xFFFFFFFF, potencyPos);
+        timerLabel.extractWidgetRenderState(graphics, 0, 0, 0);
+        potencyLabel.extractWidgetRenderState(graphics, 0, 0, 0);
         graphics.pose().popMatrix();
     }
     @WrapOperation(at = @At(value = "INVOKE", target = "Lnet/minecraft/util/ARGB;colorFromFloat(FFFF)I"), method = "extractVignette")

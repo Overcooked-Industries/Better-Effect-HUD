@@ -9,22 +9,22 @@ import net.minecraft.network.chat.Component;
 
 public class BetterEffectHudLabel extends AbstractWidget {
     private final int color;
-    private final boolean centered;
+    private final BetterEffectHudAlignment alignment;
 
-    public BetterEffectHudLabel(Component text, int posX, int posY, int color, boolean centered) {
+    public BetterEffectHudLabel(Component text, int posX, int posY, int color, BetterEffectHudAlignment alignment) {
         super(posX, posY, Minecraft.getInstance().font.width(text), Minecraft.getInstance().font.lineHeight, text);
         this.color = color;
-        this.centered = centered;
+        this.alignment = alignment;
     }
 
     @Override
-    protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
-        if (centered) {
-            graphics.centeredText(Minecraft.getInstance().font, getMessage(), getX(), getY(), color);
-        } else {
-            graphics.text(Minecraft.getInstance().font, getMessage(), getX(), getY(), color);
-        }
+    public void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        graphics.text(Minecraft.getInstance().font, getMessage(), getAlignedPos(getX(), alignment.posX, getWidth()), getAlignedPos(getY(), alignment.posY, getHeight()), color);
 
+    }
+
+    private int getAlignedPos(int pos, int alignment, int offset) {
+        return (int) ((float) pos - (((float) alignment / 2) * (float) offset));
     }
 
     @Override
