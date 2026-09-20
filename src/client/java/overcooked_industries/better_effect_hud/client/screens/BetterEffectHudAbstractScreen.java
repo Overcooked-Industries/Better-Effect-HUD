@@ -3,6 +3,7 @@ package overcooked_industries.better_effect_hud.client.screens;
 import com.google.common.collect.ImmutableList;
 import com.mojang.renderpearl.api.pipeline.RenderPipeline;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.components.tabs.*;
@@ -20,8 +21,8 @@ import java.util.List;
 
 @NullMarked
 public abstract class BetterEffectHudAbstractScreen extends Screen {
-    public BetterEffectHudAbstractScreen(Component title) {
-        super(title);
+    public BetterEffectHudAbstractScreen() {
+        super(Component.literal(""));
     }
 
     public static BetterEffectHudAlignment[] betterEffectHudAlignments = new BetterEffectHudAlignment[] {
@@ -87,8 +88,8 @@ public abstract class BetterEffectHudAbstractScreen extends Screen {
         }, posX, posY, sizeX, sizeY, alignment, disabled);
     }
 
-    public static List<Button> newAlignmentButtons(int posX, int posY, int sizeX, int sizeY, String field, Screen screen, Character color) throws NoSuchFieldException, IllegalAccessException {
-        List<Button> out = new ArrayList<>();
+    public static List<AbstractWidget> newAlignmentButtons(int posX, int posY, int sizeX, int sizeY, String field, Screen screen, Character color) throws NoSuchFieldException, IllegalAccessException {
+        List<AbstractWidget> out = new ArrayList<>();
 
 
         VarHandle handle = BetterEffectHudConfig.varHandle(field, BetterEffectHudAlignment.class);

@@ -23,7 +23,7 @@ public class BetterEffectHudTexture extends AbstractWidget {
 
     @Override
     protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
-        graphics.blitSprite(renderPipeline, texture, getX(), getX(), getWidth(), getHeight(), color);
+        graphics.blitSprite(renderPipeline, texture, getX(), getY(), getWidth(), getHeight(), color);
     }
 
     @Override

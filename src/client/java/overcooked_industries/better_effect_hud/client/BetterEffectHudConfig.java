@@ -14,6 +14,8 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BetterEffectHudConfig {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
@@ -82,7 +84,7 @@ public class BetterEffectHudConfig {
     public int potencyColor = 0xFFFFFFFF;
     public Boolean autoTimerColor = true;
     public Boolean autoPotencyColor = true;
-    public float timerSize = 1.0f;
+    public double timerSize = 1.0f;
     public double potencySize = 1.0;
     public Boolean timerUseMs = false;
     public int timerMinUnit = 0;
@@ -96,7 +98,9 @@ public class BetterEffectHudConfig {
     public Identifier[] effectWarningIdentifiers = {Identifier.withDefaultNamespace("strength"), Identifier.withDefaultNamespace("speed")};
     //Position
     public BetterEffectHudAlignment hudAlignment = BetterEffectHudAlignment.TOP_RIGHT;
+    public BetterEffectHudAlignment extraHudAlignment = BetterEffectHudAlignment.TOP_LEFT;
     public Boolean stackY = false;
+    public Boolean extraStackY = false;
     public Double hudSize = 1.0;
     //Experimental
     public Boolean experimentalEnableCustomTimerSize = false;

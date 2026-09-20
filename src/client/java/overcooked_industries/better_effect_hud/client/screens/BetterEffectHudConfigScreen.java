@@ -13,8 +13,8 @@ import java.util.List;
 
 public class BetterEffectHudConfigScreen extends BetterEffectHudAbstractTabScreen {
 
-    public BetterEffectHudConfigScreen(Component title, int page, Screen parent) {
-        super(title, page, parent);
+    public BetterEffectHudConfigScreen(int page, Screen parent) {
+        super(page, parent);
     }
 
     protected void init() {

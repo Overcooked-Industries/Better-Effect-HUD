@@ -10,7 +10,7 @@ public class BetterEffectHudModMenuInitializer implements ModMenuApi {
 
     @Override
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
-        return (Screen parent) -> new BetterEffectHudConfigScreen(Component.literal("Config Screen"), 0, parent);
+        return (Screen parent) -> new BetterEffectHudConfigScreen(0, parent);
     }
 
 }

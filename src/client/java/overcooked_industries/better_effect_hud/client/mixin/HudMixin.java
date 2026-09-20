@@ -14,9 +14,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import overcooked_industries.better_effect_hud.client.BetterEffectHudConfig;
@@ -29,9 +27,6 @@ import java.util.Collection;
 public abstract class HudMixin {
     @Unique
     public int warningColor;
-    @Shadow
-    @Final
-    private Minecraft minecraft;
 
     @WrapOperation(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;blitSprite(Lcom/mojang/renderpearl/api/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V"), method = "extractEffects")
     private void background(
@@ -77,7 +72,7 @@ public abstract class HudMixin {
         Holder<MobEffect> effect = mobEffectInstance.getEffect(); boolean isBeneficial = effect.value().isBeneficial();
         int count = harmfulCount; if (effect.value().isBeneficial()) count = beneficialCount;
         int maxCount = 0; for (MobEffectInstance i : Ordering.natural().reverse().sortedCopy(activeEffects)) if (i.getEffect().value().isBeneficial() == isBeneficial) maxCount += 1;
-        float guiDownscale = BetterEffectHudConfig.getInstance().timerSize; float guiUpscale = 1 / guiDownscale;
+        float guiDownscale = (float) BetterEffectHudConfig.getInstance().timerSize; float guiUpscale = 1 / guiDownscale;
 
         int posX = getPrimaryEffectPos(hudAlignmentX, count, maxCount, false);
         int posY = getSecondaryEffectPos(hudAlignmentY, isBeneficial, true);
@@ -92,22 +87,22 @@ public abstract class HudMixin {
         graphics.pose().scale(guiDownscale, guiDownscale);
         BetterEffectHudAlignment timerPos = BetterEffectHudConfig.getInstance().timerPos;
         BetterEffectHudAlignment potencyPos = BetterEffectHudConfig.getInstance().potencyPos;
-        BetterEffectHudLabel timerLabel = new BetterEffectHudLabel(Component.literal(getDuration(mobEffectInstance)), (int) ((posX + 3 + 9 * (timerPos.posX)) * guiUpscale), (int) ((posY + 3 + 9 * (timerPos.posY)) * guiUpscale), 0xFFFFFFFF, timerPos);
-        BetterEffectHudLabel potencyLabel = new BetterEffectHudLabel(Component.literal(getPotency(mobEffectInstance)), (int) ((posX + 3 + 9 * (potencyPos.posX)) * guiUpscale), (int) ((posY + 3 + 9 * (potencyPos.posY)) * guiUpscale), 0xFFFFFFFF, potencyPos);
+        BetterEffectHudLabel timerLabel = new BetterEffectHudLabel(Component.literal(getDuration(mobEffectInstance)), (int) ((posX + 3 + 9 * (timerPos.posX)) * guiUpscale), (int) ((posY + 3 + 10 * (timerPos.posY)) * guiUpscale), 0xFFFFFFFF, timerPos);
+        BetterEffectHudLabel potencyLabel = new BetterEffectHudLabel(Component.literal(getPotency(mobEffectInstance)), (int) ((posX + 3 + 9 * (potencyPos.posX)) * guiUpscale), (int) ((posY + 3 + 10 * (potencyPos.posY)) * guiUpscale), 0xFFFFFFFF, potencyPos);
         timerLabel.extractWidgetRenderState(graphics, 0, 0, 0);
         potencyLabel.extractWidgetRenderState(graphics, 0, 0, 0);
         graphics.pose().popMatrix();
     }
     @WrapOperation(at = @At(value = "INVOKE", target = "Lnet/minecraft/util/ARGB;colorFromFloat(FFFF)I"), method = "extractVignette")
     private int extractVignette(float alpha, float red, float green, float blue, Operation<Integer> original) {
-        return getBlendColor(ARGB.color(0xFF, warningColor), 0xFF_FF_FF_FF);
+        return getVignetteBlendColor(ARGB.color(0xFF, warningColor), 0xFF_FF_FF_FF);
     }
 
     ///# Uses Blend mode ONE_MINUS_SRC_COLOR
     ///### GL and VK respectively:
     /// - GL_ONE_MINUS_SRC_COLOR 0x301
     /// - VK_BLEND_FACTOR_ONE_MINUS_SRC_COLOR 0x3
-    int getBlendColor(int target, int baseColor) {
+    int getVignetteBlendColor(int target, int baseColor) {
         int baseA = ARGB.alpha(target);
         int baseR = ARGB.red(baseColor);
         int baseG = ARGB.green(baseColor);

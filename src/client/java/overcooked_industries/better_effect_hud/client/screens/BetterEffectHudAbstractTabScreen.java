@@ -7,8 +7,8 @@ public abstract class BetterEffectHudAbstractTabScreen extends BetterEffectHudAb
     int page;
     Screen parent;
 
-    public BetterEffectHudAbstractTabScreen(Component title, int page, Screen parent) {
-        super(title);
+    public BetterEffectHudAbstractTabScreen(int page, Screen parent) {
+        super();
         this.page = page;
         this.parent = parent;
     }

@@ -12,6 +12,6 @@ public abstract class BetterEffectHudAbstractTab extends GridLayoutTab  {
     public BetterEffectHudAbstractTab(Screen parent, Component title, int page) {
         super(title);
         this.page = page;
-        this.screen = new BetterEffectHudConfigScreen(Component.literal("Config Screen"), page, parent);
+        this.screen = new BetterEffectHudConfigScreen(page, parent);
     }
 }

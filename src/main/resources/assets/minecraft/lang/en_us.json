@@ -26,5 +26,6 @@
   "better_effect_hud.hud.category.info.max": "Max",
   "better_effect_hud.hud.category.info.decimal": "Decimal",
   "better_effect_hud.hud.category.position.toggle_button.stack_y": "Stack Vertical",
+  "better_effect_hud.hud.category.position.toggle_button.extra_stack_y": "Extra Stack Vertical",
   "better_effect_hud.hud.category.experimental.toggle_button.experimental_enable_custom_timer_size": "Enable Custom Timer Size"
 }

@@ -18,7 +18,7 @@ public class BetterEffectHudSlider extends AbstractSliderButton {
         this.text = text;
         this.min = min;
         this.max = max;
-        super(x, y, width, height, Component.literal(""), (double) handle.get(BetterEffectHudConfig.getInstance()));
+        super(x, y, width, height, Component.literal(""), ((double) handle.get(BetterEffectHudConfig.getInstance()) - min) / (max - min));
         updateMessage();
     }
 
