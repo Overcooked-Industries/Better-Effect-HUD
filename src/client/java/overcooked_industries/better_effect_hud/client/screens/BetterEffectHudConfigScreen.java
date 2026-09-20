@@ -5,8 +5,8 @@ import net.minecraft.client.gui.components.tabs.Tab;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import overcooked_industries.better_effect_hud.client.BetterEffectHudConfig;
+import overcooked_industries.better_effect_hud.client.screens.config_tabs.*;
 import overcooked_industries.better_effect_hud.client.screens.elements.BetterEffectHudAlignment;
-import overcooked_industries.better_effect_hud.client.screens.elements.config_tabs.*;
 
 import java.util.ArrayList;
 import java.util.List;

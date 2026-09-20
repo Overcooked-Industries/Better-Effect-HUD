@@ -1,10 +1,8 @@
-package overcooked_industries.better_effect_hud.client.screens.elements.config_tabs;
+package overcooked_industries.better_effect_hud.client.screens.config_tabs;
 
 import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import org.jspecify.annotations.NonNull;
 import overcooked_industries.better_effect_hud.client.screens.BetterEffectHudAbstractScreen;
 import overcooked_industries.better_effect_hud.client.screens.elements.BetterEffectHudAlignment;
 

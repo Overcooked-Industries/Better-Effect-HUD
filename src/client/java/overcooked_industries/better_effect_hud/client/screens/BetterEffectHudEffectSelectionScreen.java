@@ -20,9 +20,9 @@ public class BetterEffectHudEffectSelectionScreen extends BetterEffectHudAbstrac
     VarHandle handle;
     int index;
     Screen screen;
-    public BetterEffectHudEffectSelectionScreen(String field, int index, Screen screen) throws NoSuchFieldException, IllegalAccessException {
+    public BetterEffectHudEffectSelectionScreen(VarHandle handle, int index, Screen screen) throws NoSuchFieldException, IllegalAccessException {
         super();
-        this.handle = BetterEffectHudConfig.varHandle(field, Identifier[].class);
+        this.handle = handle;
         this.index = index;
         this.screen = screen;
     }

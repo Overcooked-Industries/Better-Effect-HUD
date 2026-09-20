@@ -1,4 +1,4 @@
-package overcooked_industries.better_effect_hud.client.screens.elements.config_tabs;
+package overcooked_industries.better_effect_hud.client.screens.config_tabs;
 
 import net.minecraft.client.gui.components.tabs.GridLayoutTab;
 import net.minecraft.client.gui.screens.Screen;
