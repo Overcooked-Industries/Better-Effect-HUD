@@ -13,13 +13,13 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"overcooked_industries.better_effect_hud.BetterEffectHUD"
+			"overcooked_industries.better_effect_hud.BetterEffectHud"
 		],
 		"client": [
-			"overcooked_industries.better_effect_hud.client.BetterEffectHUDClient"
+			"overcooked_industries.better_effect_hud.client.BetterEffectHudClient"
 		],
 		"fabric-datagen": [
-			"overcooked_industries.better_effect_hud.client.BetterEffectHUDDataGenerator"
+			"overcooked_industries.better_effect_hud.client.BetterEffectHudDataGenerator"
 		],
 		"modmenu": [
 			"overcooked_industries.better_effect_hud.client.screens.BetterEffectHudModMenuInitializer"

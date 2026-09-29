@@ -24,7 +24,6 @@ public class BetterEffectHudConfigScreen extends BetterEffectHudAbstractTabScree
         tabs.add(new DurationBarTab(parent, Component.translatable("better_effect_hud.hud.category.duration_bar"), 2));
         tabs.add(new WarningTab(parent, Component.translatable("better_effect_hud.hud.category.warning"), 3));
         tabs.add(new PositionTab(parent, Component.translatable("better_effect_hud.hud.category.position"), 4));
-        if (BetterEffectHudConfig.getInstance().enableExperimental) {tabs.add(new ExperimentalTab(parent, Component.translatable("better_effect_hud.hud.category.experimental"), 5));}
 
         addRenderableWidget(newTabNavigationBar(this, tabs, page));
         addRenderableWidget(BetterEffectHudAbstractScreen.newButton(Component.translatable("gui.done"), (btn) -> Minecraft.getInstance().setScreenAndShow(parent), 0, -25, 200, 21, BetterEffectHudAlignment.BOTTOM_MIDDLE, false));

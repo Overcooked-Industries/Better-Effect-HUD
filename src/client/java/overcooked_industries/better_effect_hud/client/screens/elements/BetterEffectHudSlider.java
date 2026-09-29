@@ -24,7 +24,7 @@ public class BetterEffectHudSlider extends AbstractSliderButton {
 
     @Override
     protected void updateMessage() {
-        this.setMessage(Component.literal(String.format(text, min + ((max - min) * this.value))));
+        this.setMessage(Component.literal(String.format(text, String.format("%.2f", min + ((max - min) * this.value)))));
     }
 
     @Override

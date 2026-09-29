@@ -37,11 +37,12 @@ public class BetterEffectHudEffectEditScreen extends BetterEffectHudAbstractScre
         addRenderableWidget(BetterEffectHudAbstractScreen.newButton(Component.literal("+"), (btn) -> {
             Identifier[] effectWarningIdentifiers = BetterEffectHudConfig.getInstance().effectWarningIdentifiers.clone();
             Identifier[] updatedEffectWarningIdentifiers = Arrays.copyOf(effectWarningIdentifiers, effectWarningIdentifiers.length + 1);
-            updatedEffectWarningIdentifiers[effectWarningIdentifiers.length] = Identifier.withDefaultNamespace("mob_effect/strengh");
+            updatedEffectWarningIdentifiers[effectWarningIdentifiers.length] = Identifier.withDefaultNamespace("mob_effect/strength");
             BetterEffectHudConfig.getInstance().effectWarningIdentifiers = updatedEffectWarningIdentifiers;
             BetterEffectHudConfig.serialize();
             Minecraft.getInstance().setScreenAndShow(plusButtonScreen);
-        }, 12,  5, 21, 21, BetterEffectHudAlignment.TOP_LEFT, false));
+        }, 13,  13, 21, 21, BetterEffectHudAlignment.TOP_LEFT, false));
+        addRenderableWidget(BetterEffectHudAbstractScreen.newButton(Component.translatable("gui.done"), (btn) -> Minecraft.getInstance().setScreenAndShow(screen), 0, -25, 200, 21, BetterEffectHudAlignment.BOTTOM_MIDDLE, false));
         int i = 0;
         for (Identifier effect : value) {
             int width = Math.round((float) (Minecraft.getInstance().getWindow().getGuiScaledWidth() - 40) / 18) * 18;
