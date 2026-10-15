@@ -4,9 +4,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.tabs.Tab;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import overcooked_industries.better_effect_hud.client.BetterEffectHudConfig;
 import overcooked_industries.better_effect_hud.client.screens.config_tabs.*;
-import overcooked_industries.better_effect_hud.client.screens.elements.BetterEffectHudAlignment;
+import overcooked_industries.better_effect_hud.client.BetterEffectHudAlignment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +22,7 @@ public class BetterEffectHudConfigScreen extends BetterEffectHudAbstractTabScree
         tabs.add(new InfoTab(parent, Component.translatable("better_effect_hud.hud.category.info"), 1));
         tabs.add(new DurationBarTab(parent, Component.translatable("better_effect_hud.hud.category.duration_bar"), 2));
         tabs.add(new WarningTab(parent, Component.translatable("better_effect_hud.hud.category.warning"), 3));
-        tabs.add(new PositionTab(parent, Component.translatable("better_effect_hud.hud.category.position"), 4));
+        tabs.add(new DisplayTab(parent, Component.translatable("better_effect_hud.hud.category.display"), 4));
 
         addRenderableWidget(newTabNavigationBar(this, tabs, page));
         addRenderableWidget(BetterEffectHudAbstractScreen.newButton(Component.translatable("gui.done"), (btn) -> Minecraft.getInstance().setScreenAndShow(parent), 0, -25, 200, 21, BetterEffectHudAlignment.BOTTOM_MIDDLE, false));

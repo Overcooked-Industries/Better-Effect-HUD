@@ -1,4 +1,4 @@
-package overcooked_industries.better_effect_hud.client.screens.elements;
+package overcooked_industries.better_effect_hud.client;
 
 public enum BetterEffectHudAlignment {
     TOP_LEFT(0, 0),

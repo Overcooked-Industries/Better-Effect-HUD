@@ -3,6 +3,7 @@ package overcooked_industries.better_effect_hud.client.screens.elements;
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.network.chat.Component;
 import overcooked_industries.better_effect_hud.client.BetterEffectHudConfig;
+import overcooked_industries.better_effect_hud.client.screens.BetterEffectHudAbstractScreen;
 
 import java.lang.invoke.VarHandle;
 
@@ -21,13 +22,17 @@ public class BetterEffectHudIntSlider extends AbstractSliderButton {
     VarHandle handle;
     int min;
     int max;
+    BetterEffectHudAbstractScreen.BetterEffectHudCallable updateFunction;
+    Object configObject;
 
-    public BetterEffectHudIntSlider(int x, int y, int width, int height, String text, String field, int min, int max) throws NoSuchFieldException, IllegalAccessException {
-        super(x, y, width, height, Component.literal(""),  (double) ((int) BetterEffectHudConfig.getField(field, Integer.class) - min) / (max - min));
-        this.handle = BetterEffectHudConfig.varHandle(field, Integer.class);
+    public BetterEffectHudIntSlider(int x, int y, int width, int height, String text, VarHandle handle, int min, int max, BetterEffectHudAbstractScreen.BetterEffectHudCallable updateFunction, Object configObject) {
+        this.handle = handle;
         this.text = text;
         this.min = min;
         this.max = max;
+        this.updateFunction = updateFunction;
+        this.configObject = configObject;
+        super(x, y, width, height, Component.empty(), ((double) handle.get(configObject) - min) / (max - min));
         updateMessage();
     }
 
@@ -38,7 +43,12 @@ public class BetterEffectHudIntSlider extends AbstractSliderButton {
 
     @Override
     protected void applyValue() {
-        handle.set(BetterEffectHudConfig.getInstance(), (int) Math.round(min + (max - min) * this.value));
-        BetterEffectHudConfig.serialize();
+        handle.set(configObject, (int) Math.round(min + (max - min) * this.value));
+        updateFunction.call();
+    }
+
+    public void update() {
+        value = (double) ((int) handle.get(configObject) - min) / (max - min);
+        updateMessage();
     }
 }

@@ -10,7 +10,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 
 public class BetterEffectHudTexture extends AbstractWidget {
-    private final int color;
+    private int color;
     private final RenderPipeline renderPipeline;
     private final Identifier texture;
 
@@ -21,9 +21,13 @@ public class BetterEffectHudTexture extends AbstractWidget {
         this.texture = texture;
     }
 
+    public void setColor(int color) {
+        this.color = color;
+    }
+
     @Override
     protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
-        graphics.blitSprite(renderPipeline, texture, getX(), getY(), getWidth(), getHeight(), color);
+        graphics.blit(renderPipeline, texture, getX(), getY(), 0, 0, getWidth(), getHeight(), getWidth(), getHeight(), color);
     }
 
     @Override

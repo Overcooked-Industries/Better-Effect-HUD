@@ -3,6 +3,7 @@ package overcooked_industries.better_effect_hud.client.screens.elements;
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.network.chat.Component;
 import overcooked_industries.better_effect_hud.client.BetterEffectHudConfig;
+import overcooked_industries.better_effect_hud.client.screens.BetterEffectHudAbstractScreen;
 
 import java.lang.invoke.VarHandle;
 
@@ -11,14 +12,17 @@ public class BetterEffectHudSlider extends AbstractSliderButton {
     VarHandle handle;
     double min;
     double max;
+    BetterEffectHudAbstractScreen.BetterEffectHudCallable updateFunction;
+    Object configObject;
 
-    public BetterEffectHudSlider(int x, int y, int width, int height, String text, String field, double min, double max) throws NoSuchFieldException, IllegalAccessException {
-        VarHandle handle =  BetterEffectHudConfig.varHandle(field, double.class);
+    public BetterEffectHudSlider(int x, int y, int width, int height, String text, VarHandle handle, double min, double max, BetterEffectHudAbstractScreen.BetterEffectHudCallable updateFunction, Object configObject) {
         this.handle = handle;
         this.text = text;
         this.min = min;
         this.max = max;
-        super(x, y, width, height, Component.literal(""), ((double) handle.get(BetterEffectHudConfig.getInstance()) - min) / (max - min));
+        this.updateFunction = updateFunction;
+        this.configObject = configObject;
+        super(x, y, width, height, Component.empty(), ((double) handle.get(configObject) - min) / (max - min));
         updateMessage();
     }
 
@@ -29,8 +33,12 @@ public class BetterEffectHudSlider extends AbstractSliderButton {
 
     @Override
     protected void applyValue() {
-        handle.set(BetterEffectHudConfig.getInstance(), min + ((max - min) * this.value));
-        BetterEffectHudConfig.serialize();
-        double value = this.value;
+        handle.set(configObject, min + ((max - min) * this.value));
+        updateFunction.call();
+    }
+
+    public void update() {
+        value = ((double) handle.get(configObject) - min) / (max - min);
+        updateMessage();
     }
 }

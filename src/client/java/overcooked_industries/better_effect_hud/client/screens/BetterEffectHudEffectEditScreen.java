@@ -4,17 +4,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.effect.MobEffect;
 import overcooked_industries.better_effect_hud.client.BetterEffectHudConfig;
-import overcooked_industries.better_effect_hud.client.screens.elements.BetterEffectHudAlignment;
+import overcooked_industries.better_effect_hud.client.BetterEffectHudAlignment;
 
 import java.lang.invoke.VarHandle;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.Optional;
 
 public class BetterEffectHudEffectEditScreen extends BetterEffectHudAbstractScreen {
@@ -37,7 +33,7 @@ public class BetterEffectHudEffectEditScreen extends BetterEffectHudAbstractScre
         addRenderableWidget(BetterEffectHudAbstractScreen.newButton(Component.literal("+"), (btn) -> {
             Identifier[] effectWarningIdentifiers = BetterEffectHudConfig.getInstance().effectWarningIdentifiers.clone();
             Identifier[] updatedEffectWarningIdentifiers = Arrays.copyOf(effectWarningIdentifiers, effectWarningIdentifiers.length + 1);
-            updatedEffectWarningIdentifiers[effectWarningIdentifiers.length] = Identifier.withDefaultNamespace("mob_effect/strength");
+            updatedEffectWarningIdentifiers[effectWarningIdentifiers.length] = Identifier.withDefaultNamespace("strength");
             BetterEffectHudConfig.getInstance().effectWarningIdentifiers = updatedEffectWarningIdentifiers;
             BetterEffectHudConfig.serialize();
             Minecraft.getInstance().setScreenAndShow(plusButtonScreen);
@@ -66,7 +62,7 @@ public class BetterEffectHudEffectEditScreen extends BetterEffectHudAbstractScre
             addRenderableWidget(BetterEffectHudAbstractScreen.newTexture(
                     posX + 1, posY + 1, 18, 18, 0xFFFFFFFF,
                     RenderPipelines.GUI_TEXTURED,
-                    Optional.of(effect).map((id) -> id.withPrefix("mob_effect/")).orElseGet(MissingTextureAtlasSprite::getLocation)));
+                    Optional.of(effect).map((id) -> id.withPrefix("textures/mob_effect/").withSuffix(".png")).orElseGet(MissingTextureAtlasSprite::getLocation), BetterEffectHudAlignment.TOP_LEFT));
             i += 1;
         }
     }

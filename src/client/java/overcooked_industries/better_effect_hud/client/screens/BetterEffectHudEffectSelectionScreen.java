@@ -9,8 +9,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.effect.MobEffect;
+import overcooked_industries.better_effect_hud.BetterEffectHud;
 import overcooked_industries.better_effect_hud.client.BetterEffectHudConfig;
-import overcooked_industries.better_effect_hud.client.screens.elements.BetterEffectHudAlignment;
+import overcooked_industries.better_effect_hud.client.BetterEffectHudAlignment;
+import overcooked_industries.better_effect_hud.client.screens.elements.BetterEffectHudGraph;
 
 import java.lang.invoke.VarHandle;
 import java.util.Map;
@@ -46,7 +48,8 @@ public class BetterEffectHudEffectSelectionScreen extends BetterEffectHudAbstrac
             addRenderableWidget(BetterEffectHudAbstractScreen.newTexture(
                     posX + 1, posY + 1, 18, 18, 0xFFFFFFFF,
                     RenderPipelines.GUI_TEXTURED,
-                    Optional.of(effect.getKey()).map(ResourceKey::identifier).map((id) -> id.withPrefix("mob_effect/")).orElseGet(MissingTextureAtlasSprite::getLocation)));
+                    Optional.of(effect.getKey()).map(ResourceKey::identifier).map((id) -> id.withPrefix("textures/mob_effect/").withSuffix(".png")).orElseGet(MissingTextureAtlasSprite::getLocation), BetterEffectHudAlignment.TOP_LEFT)
+            );
             i += 1;
         }
     }

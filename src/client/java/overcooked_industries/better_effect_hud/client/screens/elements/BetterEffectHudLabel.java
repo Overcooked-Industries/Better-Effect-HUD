@@ -6,21 +6,27 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
+import overcooked_industries.better_effect_hud.client.BetterEffectHudAlignment;
 
 public class BetterEffectHudLabel extends AbstractWidget {
-    private final int color;
+    private int color;
     private final BetterEffectHudAlignment alignment;
+    private final boolean dropshadow;
 
-    public BetterEffectHudLabel(Component text, int posX, int posY, int color, BetterEffectHudAlignment alignment) {
+    public BetterEffectHudLabel(Component text, int posX, int posY, int color, BetterEffectHudAlignment alignment, boolean dropshadow) {
         super(posX, posY, Minecraft.getInstance().font.width(text), Minecraft.getInstance().font.lineHeight, text);
         this.color = color;
         this.alignment = alignment;
+        this.dropshadow = dropshadow;
     }
 
     @Override
     public void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
-        graphics.text(Minecraft.getInstance().font, getMessage(), getAlignedPos(getX(), alignment.posX, getWidth()), getAlignedPos(getY(), alignment.posY, getHeight()), color);
+        graphics.text(Minecraft.getInstance().font, getMessage(), getAlignedPos(getX(), alignment.posX, getWidth()), getAlignedPos(getY(), alignment.posY, getHeight()), color, dropshadow);
+    }
 
+    public void setColor(int color) {
+        this.color = color;
     }
 
     private int getAlignedPos(int pos, int alignment, int offset) {

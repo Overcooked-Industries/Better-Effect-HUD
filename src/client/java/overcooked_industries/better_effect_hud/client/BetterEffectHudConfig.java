@@ -5,7 +5,6 @@ import com.google.gson.GsonBuilder;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.resources.Identifier;
 import overcooked_industries.better_effect_hud.BetterEffectHud;
-import overcooked_industries.better_effect_hud.client.screens.elements.BetterEffectHudAlignment;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -72,17 +71,13 @@ public class BetterEffectHudConfig {
     /// Settings for each Tab.
     //General
     public Boolean enableMod = true;
-    public Boolean enableExperimental = false;
-    public Boolean backgroundColor = false;
     //Info
     public Boolean enableTimer = false;
     public Boolean enablePotency = false;
     public BetterEffectHudAlignment timerPos = BetterEffectHudAlignment.BOTTOM_MIDDLE;
     public BetterEffectHudAlignment potencyPos = BetterEffectHudAlignment.TOP_RIGHT;
-    public Integer timerColor = 0xFFFFFFFF;
-    public Integer potencyColor = 0xFFFFFFFF;
-    public Boolean autoTimerColor = false;
-    public Boolean autoPotencyColor = false;
+    public BetterEffectHudColorSetting timerColor = new BetterEffectHudColorSetting(0xFFFFFFFF, 0.5f, BetterEffectHudColorModes.CUSTOM);
+    public BetterEffectHudColorSetting potencyColor = new BetterEffectHudColorSetting(0xFFFFFFFF, 0.5f, BetterEffectHudColorModes.CUSTOM);
     public double infoSize = 1.0;
     public Boolean timerUseMs = false;
     public Integer timerMinUnit = 0;
@@ -94,20 +89,25 @@ public class BetterEffectHudConfig {
     public Boolean enableFirstPotency = false;
     //Duration Bar
     public Boolean enableDurationBar = false;
-    public double barBackgroundBrightness = 0.5;
+    public double barBackgroundOpacity = 0.5;
+    public Integer barLocationId = 2;
+    public Boolean barReverse = false;
+    public Boolean barOut = false;
+    public Boolean barCircle = false;
+    public BetterEffectHudColorSetting barColor = new BetterEffectHudColorSetting(0xFFFFFFFF, 0.5f, BetterEffectHudColorModes.EFFECT_COLOR);
     //Warning
     public Boolean enableWarning = false;
-    public Boolean enableVignette = false;
-    public Identifier[] effectWarningIdentifiers = {Identifier.withDefaultNamespace("strength"), Identifier.withDefaultNamespace("speed")};
     public Integer warningTime = 10;
-    public Integer vignetteTransparency = 100;
     public Boolean useEffectListWarning = false;
+
+    public Boolean enableVignette = false;
+    public Integer vignetteTime = 10;
+    public Integer vignetteTransparency = 100;
+
+    public Identifier[] effectWarningIdentifiers = {Identifier.withDefaultNamespace("strength"), Identifier.withDefaultNamespace("speed")};
     public BetterEffectHudAlignment effectWarningAlignment = BetterEffectHudAlignment.TOP_RIGHT;
-    //Position
+    //Display
     public BetterEffectHudAlignment hudAlignment = BetterEffectHudAlignment.TOP_RIGHT;
     public Boolean hudStackY = false;
-    public double hudSize = 1.0;
-    public Boolean enableCustomHudSize = false;
-    public Integer hudPosX = 1;
-    public Integer hudPosY = 1;
+    public BetterEffectHudColorSetting backgroundColor = new BetterEffectHudColorSetting(0xFFFFFFFF, 0.5f, BetterEffectHudColorModes.CUSTOM);
 }
