@@ -31,10 +31,10 @@ public class BetterEffectHudEffectEditScreen extends BetterEffectHudAbstractScre
             throw new RuntimeException(e);
         }
         addRenderableWidget(BetterEffectHudAbstractScreen.newButton(Component.literal("+"), (btn) -> {
-            Identifier[] effectWarningIdentifiers = BetterEffectHudConfig.getInstance().effectWarningIdentifiers.clone();
-            Identifier[] updatedEffectWarningIdentifiers = Arrays.copyOf(effectWarningIdentifiers, effectWarningIdentifiers.length + 1);
-            updatedEffectWarningIdentifiers[effectWarningIdentifiers.length] = Identifier.withDefaultNamespace("strength");
-            BetterEffectHudConfig.getInstance().effectWarningIdentifiers = updatedEffectWarningIdentifiers;
+            Identifier[] identifiers = (Identifier[]) handle.get(BetterEffectHudConfig.getInstance());
+            Identifier[] updatedIdentifiers = Arrays.copyOf(identifiers, identifiers.length + 1);
+            updatedIdentifiers[identifiers.length] = Identifier.withDefaultNamespace("strength");
+            handle.set(BetterEffectHudConfig.getInstance(), updatedIdentifiers);
             BetterEffectHudConfig.serialize();
             Minecraft.getInstance().setScreenAndShow(plusButtonScreen);
         }, 13,  13, 21, 21, BetterEffectHudAlignment.TOP_LEFT, false));
@@ -47,13 +47,13 @@ public class BetterEffectHudEffectEditScreen extends BetterEffectHudAbstractScre
             int finalI = i;
             addRenderableWidget(BetterEffectHudAbstractScreen.newButton(Component.empty(),
                     (btn) -> {
-                        Identifier[] effectWarningIdentifiers = BetterEffectHudConfig.getInstance().effectWarningIdentifiers.clone();
-                        Identifier[] updatedEffectWarningIdentifiers = new Identifier[effectWarningIdentifiers.length - 1];
-                        for (int j = 0; j < effectWarningIdentifiers.length - 1; j++) {
-                            if (j < finalI) {updatedEffectWarningIdentifiers[j] = effectWarningIdentifiers[j]; continue;}
-                            updatedEffectWarningIdentifiers[j] = effectWarningIdentifiers[j + 1 ];
+                        Identifier[] identifiers = (Identifier[]) handle.get(BetterEffectHudConfig.getInstance());
+                        Identifier[] updatedIdentifiers = new Identifier[identifiers.length - 1];
+                        for (int j = 0; j < identifiers.length - 1; j++) {
+                            if (j < finalI) {updatedIdentifiers[j] = identifiers[j]; continue;}
+                            updatedIdentifiers[j] = identifiers[j + 1 ];
                         }
-                        BetterEffectHudConfig.getInstance().effectWarningIdentifiers = updatedEffectWarningIdentifiers;
+                        handle.set(BetterEffectHudConfig.getInstance(), updatedIdentifiers);
                         BetterEffectHudConfig.serialize();
                         Minecraft.getInstance().setScreenAndShow(this);
                     },

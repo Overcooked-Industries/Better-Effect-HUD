@@ -10,6 +10,5 @@ public class BetterEffectHudClient implements ClientModInitializer {
 	}
 	public static void incrementColorTime() {
 		colorTime += 1;
-		colorTime = colorTime % 256;
 	}
 }

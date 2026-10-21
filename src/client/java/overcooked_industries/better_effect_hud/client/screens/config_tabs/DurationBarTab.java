@@ -4,7 +4,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import overcooked_industries.better_effect_hud.client.BetterEffectHudColorModes;
 import overcooked_industries.better_effect_hud.client.BetterEffectHudColorSetting;
 import overcooked_industries.better_effect_hud.client.BetterEffectHudConfig;
 import overcooked_industries.better_effect_hud.client.screens.BetterEffectHudAbstractScreen;
@@ -30,8 +29,7 @@ public class DurationBarTab extends BetterEffectHudAbstractTab {
             }, 105, 65, 200, 21, BetterEffectHudAlignment.TOP_MIDDLE, BetterEffectHudConfig.getInstance().barCircle));
             widgets.add(BetterEffectHudAbstractScreen.newToggleButton(Component.translatable("better_effect_hud.hud.category.duration_bar.toggle_button.bar_out"), -105, 96, 200, 21, BetterEffectHudAlignment.TOP_MIDDLE, BetterEffectHudConfig.varHandle("barOut", Boolean.class), screen, false));
             widgets.add(BetterEffectHudAbstractScreen.newToggleButton(Component.translatable("better_effect_hud.hud.category.duration_bar.toggle_button.bar_circle"), 105, 96, 200, 21, BetterEffectHudAlignment.TOP_MIDDLE, BetterEffectHudConfig.varHandle("barCircle", Boolean.class), screen, false));
-            widgets.add(BetterEffectHudAbstractScreen.newColorModeButton(Component.translatable("better_effect_hud.hud.category.duration_bar.color_mode_button.bar_color_mode"), BetterEffectHudConfig.varHandle("barColor", BetterEffectHudColorSetting.class), BetterEffectHudConfig::serialize, BetterEffectHudConfig.getInstance(), screen, -105, 127, 200, 21, BetterEffectHudAlignment.TOP_MIDDLE, false));
-            if (BetterEffectHudConfig.getInstance().barColor.getColorMode() == BetterEffectHudColorModes.CUSTOM) widgets.addAll(BetterEffectHudAbstractScreen.newColorEditBox(105, 127, 200, 21, BetterEffectHudConfig.varHandle("barColor", BetterEffectHudColorSetting.class), BetterEffectHudAlignment.TOP_MIDDLE, screen));
+            widgets.addAll(BetterEffectHudAbstractScreen.newColorSetting(Component.translatable("better_effect_hud.hud.category.duration_bar.color_mode_button.bar_color_mode"), BetterEffectHudConfig.varHandle("barColor", BetterEffectHudColorSetting.class), BetterEffectHudConfig::serialize, BetterEffectHudConfig.getInstance(), screen, -105, 127, 200, 21, BetterEffectHudAlignment.TOP_MIDDLE, BetterEffectHudAlignment.MIDDLE_RIGHT, false));
             for (AbstractWidget widget : widgets) {layout.addChild(widget, 0, 0);}
         } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new RuntimeException(e);

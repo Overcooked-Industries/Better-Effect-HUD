@@ -13,6 +13,9 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class BetterEffectHudConfig {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
@@ -23,6 +26,11 @@ public class BetterEffectHudConfig {
     public static BetterEffectHudConfig getInstance() {
         if (instance == null) instance = new BetterEffectHudConfig();
         return instance;
+    }
+
+    public static void reset() {
+        instance = new BetterEffectHudConfig();
+        serialize();
     }
 
     //Must be private.
@@ -76,8 +84,8 @@ public class BetterEffectHudConfig {
     public Boolean enablePotency = false;
     public BetterEffectHudAlignment timerPos = BetterEffectHudAlignment.BOTTOM_MIDDLE;
     public BetterEffectHudAlignment potencyPos = BetterEffectHudAlignment.TOP_RIGHT;
-    public BetterEffectHudColorSetting timerColor = new BetterEffectHudColorSetting(0xFFFFFFFF, 0.5f, BetterEffectHudColorModes.CUSTOM);
-    public BetterEffectHudColorSetting potencyColor = new BetterEffectHudColorSetting(0xFFFFFFFF, 0.5f, BetterEffectHudColorModes.CUSTOM);
+    public BetterEffectHudColorSetting timerColor = new BetterEffectHudColorSetting(0xAAFFFFFF, 0.5f, BetterEffectHudColorModes.CUSTOM, new ArrayList<>(List.of(new BetterEffectHudGradientElement(0xFFFFFFFF, 0.5f))));
+    public BetterEffectHudColorSetting potencyColor = new BetterEffectHudColorSetting(0xAAFFFFFF, 0.5f, BetterEffectHudColorModes.CUSTOM, new ArrayList<>(List.of(new BetterEffectHudGradientElement(0xFFFFFFFF, 0.5f))));
     public double infoSize = 1.0;
     public Boolean timerUseMs = false;
     public Integer timerMinUnit = 0;
@@ -94,7 +102,7 @@ public class BetterEffectHudConfig {
     public Boolean barReverse = false;
     public Boolean barOut = false;
     public Boolean barCircle = false;
-    public BetterEffectHudColorSetting barColor = new BetterEffectHudColorSetting(0xFFFFFFFF, 0.5f, BetterEffectHudColorModes.EFFECT_COLOR);
+    public BetterEffectHudColorSetting barColor = new BetterEffectHudColorSetting(0xFFFFFFFF, 0.5f, BetterEffectHudColorModes.EFFECT_COLOR, new ArrayList<>(List.of(new BetterEffectHudGradientElement(0xFFFFFFFF, 0.5f))));
     //Warning
     public Boolean enableWarning = false;
     public Integer warningTime = 10;
@@ -104,10 +112,15 @@ public class BetterEffectHudConfig {
     public Integer vignetteTime = 10;
     public Integer vignetteTransparency = 100;
 
-    public Identifier[] effectWarningIdentifiers = {Identifier.withDefaultNamespace("strength"), Identifier.withDefaultNamespace("speed")};
-    public BetterEffectHudAlignment effectWarningAlignment = BetterEffectHudAlignment.TOP_RIGHT;
+    public Identifier[] effectWarningIdentifiers = {Identifier.withDefaultNamespace("strength"), Identifier.withDefaultNamespace("speed"), Identifier.withDefaultNamespace("fire_resistance")};
     //Display
     public BetterEffectHudAlignment hudAlignment = BetterEffectHudAlignment.TOP_RIGHT;
+    public BetterEffectHudAlignment extraHudAlignment = BetterEffectHudAlignment.TOP_RIGHT;
     public Boolean hudStackY = false;
-    public BetterEffectHudColorSetting backgroundColor = new BetterEffectHudColorSetting(0xFFFFFFFF, 0.5f, BetterEffectHudColorModes.CUSTOM);
+    public Boolean extraHudStackY = false;
+    public Boolean hudInvert = false;
+    public Boolean extraHudInvert = false;
+    public BetterEffectHudColorSetting backgroundColor = new BetterEffectHudColorSetting(0xFFFFFFFF, 0.5f, BetterEffectHudColorModes.CUSTOM, new ArrayList<>(List.of(new BetterEffectHudGradientElement(0xFFFFFFFF, 0.5f))));
+    public BetterEffectHudColorSetting extraBackgroundColor = new BetterEffectHudColorSetting(0xFFFFFFFF, 0.5f, BetterEffectHudColorModes.CUSTOM, new ArrayList<>(List.of(new BetterEffectHudGradientElement(0xFFFFFFFF, 0.5f))));
+    public Identifier[] extraEffectIdentifiers = {Identifier.withDefaultNamespace("strength"), Identifier.withDefaultNamespace("speed"), Identifier.withDefaultNamespace("fire_resistance")};
 }

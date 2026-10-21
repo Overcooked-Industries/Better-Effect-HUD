@@ -5,11 +5,11 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.renderpearl.api.pipeline.RenderPipeline;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.Hud;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -23,9 +23,12 @@ import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import overcooked_industries.better_effect_hud.BetterEffectHud;
 import overcooked_industries.better_effect_hud.client.*;
 import overcooked_industries.better_effect_hud.client.screens.BetterEffectHudAbstractScreen;
+import overcooked_industries.better_effect_hud.client.screens.elements.BetterEffectHudColorGradientBox;
 import overcooked_industries.better_effect_hud.client.screens.elements.BetterEffectHudLabel;
 
 import java.awt.*;
@@ -41,7 +44,18 @@ public abstract class HudMixin {
     @Unique public MobEffectInstance[] currentMobEffects = new MobEffectInstance[0];
     @Unique public int[] currentMobEffectsMaxTime = new int[0];
     @Unique private static final float[] unitConversions = {20, 60, 60, 24, 7, 52.1429f, 1};
+    @Unique public int beneficialCount = 0;
+    @Unique public int harmfulCount = 0;
+    @Unique public int extraBeneficialCount = 0;
+    @Unique public int extraHarmfulCount = 0;
 
+    @Inject(method = "extractEffects", at = @At("HEAD"))
+    private void extractEffects(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker, CallbackInfo ci) {
+        beneficialCount = 0;
+        harmfulCount = 0;
+        extraBeneficialCount = 0;
+        extraHarmfulCount = 0;
+    }
     @WrapOperation(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;blitSprite(Lcom/mojang/renderpearl/api/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V"), method = "extractEffects")
     private void background(
             GuiGraphicsExtractor instance,
@@ -50,8 +64,6 @@ public abstract class HudMixin {
             int x, int y, int width, int height,
             Operation<Void> original,
             @Local(name = "instance") MobEffectInstance mobEffectInstance,
-            @Local(name = "beneficialCount") int beneficialCount,
-            @Local(name = "harmfulCount") int harmfulCount,
             @Local(name = "activeEffects") Collection<MobEffectInstance> activeEffects,
             @Local(name = "graphics", argsOnly = true) GuiGraphicsExtractor graphics
     ) {
@@ -59,25 +71,39 @@ public abstract class HudMixin {
             original.call(instance, renderPipeline, location, x, y, width, height);
             return;
         }
-        BetterEffectHudAlignment hudAlignment = BetterEffectHudConfig.getInstance().hudAlignment; int hudAlignmentX = hudAlignment.posX; int hudAlignmentY = hudAlignment.posY;
-        Holder<MobEffect> effect = mobEffectInstance.getEffect(); boolean isBeneficial = effect.value().isBeneficial();
-        int count = harmfulCount; if (effect.value().isBeneficial()) count = beneficialCount;
-        int maxCount = 0; for (MobEffectInstance i : Ordering.natural().reverse().sortedCopy(activeEffects)) if (i.getEffect().value().isBeneficial() == isBeneficial && i.showIcon()) maxCount += 1;
+        MobEffect effect = mobEffectInstance.getEffect().value();
+        List<Identifier> extraIdentifiers = Arrays.asList(BetterEffectHudConfig.getInstance().extraEffectIdentifiers);
+        boolean extra = extraIdentifiers.contains(BuiltInRegistries.MOB_EFFECT.getKey(effect));
+        boolean isBeneficial = effect.isBeneficial();
+        if (extra) {
+            if (isBeneficial) extraBeneficialCount += 1;
+            else extraHarmfulCount += 1;
+        } else {
+            if (isBeneficial) beneficialCount += 1;
+            else harmfulCount += 1;
+        }
+        boolean stackY = (extra) ? BetterEffectHudConfig.getInstance().extraHudStackY : BetterEffectHudConfig.getInstance().hudStackY;
+        boolean invert = (extra) ? BetterEffectHudConfig.getInstance().extraHudInvert : BetterEffectHudConfig.getInstance().hudInvert;
+        BetterEffectHudAlignment hudAlignment = (extra) ? BetterEffectHudConfig.getInstance().extraHudAlignment : BetterEffectHudConfig.getInstance().hudAlignment;
+        int hudAlignmentX = hudAlignment.posX;
+        int hudAlignmentY = hudAlignment.posY;
+        int count = (extra) ? (isBeneficial ? extraBeneficialCount : extraHarmfulCount) : (isBeneficial ? beneficialCount : harmfulCount);
+        int maxCount = 0;
+        for (MobEffectInstance i : Ordering.natural().reverse().sortedCopy(activeEffects)) if (i.getEffect().value().isBeneficial() == isBeneficial && i.showIcon() && extraIdentifiers.contains(BuiltInRegistries.MOB_EFFECT.getKey(i.getEffect().value())) == extra) maxCount += 1;
 
         int posX = getPrimaryEffectPos(hudAlignmentX, count, maxCount, false, 1);
-        int posY = getSecondaryEffectPos(hudAlignmentY, isBeneficial, true, 1);
-        if (BetterEffectHudConfig.getInstance().hudStackY) {
-            posX = getSecondaryEffectPos(hudAlignmentX, isBeneficial, false, 1);
+        int posY = getSecondaryEffectPos(hudAlignmentY, isBeneficial, true, invert, 1);
+        if (stackY) {
+            posX = getSecondaryEffectPos(hudAlignmentX, isBeneficial, false, invert, 1);
             posY = getPrimaryEffectPos(hudAlignmentY, count, maxCount, true, 1);
         }
 
-        int backgroundColor = getColorOfMode(BetterEffectHudConfig.getInstance().backgroundColor, mobEffectInstance);
+        int backgroundColor = getColorOfMode((extra) ? BetterEffectHudConfig.getInstance().extraBackgroundColor : BetterEffectHudConfig.getInstance().backgroundColor, mobEffectInstance);
         int barColor = getColorOfMode(BetterEffectHudConfig.getInstance().barColor, mobEffectInstance);
 
         graphics.blitSprite(renderPipeline, location, posX, posY, width, height, backgroundColor);
         double barLocationId = BetterEffectHudConfig.getInstance().barLocationId;
         float barValue = (float) mobEffectInstance.getDuration() / currentMobEffectsMaxTime[indexOfEffectType(currentMobEffects, mobEffectInstance.getEffect().value())];
-        int barLengh = Math.round(barValue * 18);
         boolean vertical = barLocationId % 2 == 1;
         boolean otherside = barLocationId > 1;
         boolean reverse = BetterEffectHudConfig.getInstance().barReverse;
@@ -89,8 +115,8 @@ public abstract class HudMixin {
                 drawDurationBarCircle(graphics, posX, posY, 1f, barColor & barBackgroundColor, out);
                 drawDurationBarCircle(graphics, posX, posY, barValue, barColor, out);
             } else {
-                drawDurationBar(graphics, posX, posY, 18, barColor & barBackgroundColor, vertical, otherside, reverse, out);
-                drawDurationBar(graphics, posX, posY, barLengh, barColor, vertical, otherside, reverse, out);
+                drawDurationBar(graphics, posX, posY, 1f, barColor & barBackgroundColor, vertical, otherside, reverse, out);
+                drawDurationBar(graphics, posX, posY, barValue, barColor, vertical, otherside, reverse, out);
             }
         }
     }
@@ -102,8 +128,6 @@ public abstract class HudMixin {
             int x, int y, int width, int height, int color,
             Operation<Void> original,
             @Local(name = "instance") MobEffectInstance mobEffectInstance,
-            @Local(name = "beneficialCount") int beneficialCount,
-            @Local(name = "harmfulCount") int harmfulCount,
             @Local(name = "activeEffects") Collection<MobEffectInstance> activeEffects,
             @Local(name = "graphics", argsOnly = true) GuiGraphicsExtractor graphics
     ) {
@@ -111,24 +135,32 @@ public abstract class HudMixin {
             original.call(instance, renderPipeline, location, x, y, width, height, color);
             return;
         }
-        BetterEffectHudAlignment hudAlignment = BetterEffectHudConfig.getInstance().hudAlignment; int hudAlignmentX = hudAlignment.posX; int hudAlignmentY = hudAlignment.posY;
-        Holder<MobEffect> effect = mobEffectInstance.getEffect(); boolean isBeneficial = effect.value().isBeneficial();
-        int count = harmfulCount; if (effect.value().isBeneficial()) count = beneficialCount;
-        int maxCount = 0; for (MobEffectInstance i : Ordering.natural().reverse().sortedCopy(activeEffects)) if (i.getEffect().value().isBeneficial() == isBeneficial && i.showIcon()) maxCount += 1;
+        MobEffect effect = mobEffectInstance.getEffect().value();
+        boolean isBeneficial = effect.isBeneficial();
+        List<Identifier> extraIdentifiers = Arrays.asList(BetterEffectHudConfig.getInstance().extraEffectIdentifiers);
+        boolean extra = extraIdentifiers.contains(BuiltInRegistries.MOB_EFFECT.getKey(effect));
+        BetterEffectHudAlignment hudAlignment = (extra) ? BetterEffectHudConfig.getInstance().extraHudAlignment : BetterEffectHudConfig.getInstance().hudAlignment;
+        boolean stackY = (extra) ? BetterEffectHudConfig.getInstance().extraHudStackY : BetterEffectHudConfig.getInstance().hudStackY;
+        boolean invert = (extra) ? BetterEffectHudConfig.getInstance().extraHudInvert : BetterEffectHudConfig.getInstance().hudInvert;
+        int hudAlignmentX = hudAlignment.posX;
+        int hudAlignmentY = hudAlignment.posY;
+        int count = (extra) ? (isBeneficial ? extraBeneficialCount : extraHarmfulCount) : (isBeneficial ? beneficialCount : harmfulCount);
+        int maxCount = 0;
+        for (MobEffectInstance i : Ordering.natural().reverse().sortedCopy(activeEffects)) if (i.getEffect().value().isBeneficial() == isBeneficial && i.showIcon() && extraIdentifiers.contains(BuiltInRegistries.MOB_EFFECT.getKey(i.getEffect().value())) == extra) maxCount += 1;
         float guiDownscale = (float) BetterEffectHudConfig.getInstance().infoSize;
         float guiUpscale = 1 / guiDownscale;
 
         if (
-                Arrays.stream(BetterEffectHudConfig.getInstance().effectWarningIdentifiers).toList().contains(BuiltInRegistries.MOB_EFFECT.getKey(effect.value())) &&
+                Arrays.stream(BetterEffectHudConfig.getInstance().effectWarningIdentifiers).toList().contains(BuiltInRegistries.MOB_EFFECT.getKey(effect)) &&
                 mobEffectInstance.getDuration() < BetterEffectHudConfig.getInstance().vignetteTime * 20
         ) {
-            warningTargetColor = effect.value().getColor() & 0x00FFFFFF;
+            warningTargetColor = effect.getColor() & 0x00FFFFFF;
         }
 
         int posX = getPrimaryEffectPos(hudAlignmentX, count, maxCount, false, 1);
-        int posY = getSecondaryEffectPos(hudAlignmentY, isBeneficial, true, 1);
-        if (BetterEffectHudConfig.getInstance().hudStackY) {
-            posX = getSecondaryEffectPos(hudAlignmentX, isBeneficial, false, 1);
+        int posY = getSecondaryEffectPos(hudAlignmentY, isBeneficial, true, invert, 1);
+        if (stackY) {
+            posX = getSecondaryEffectPos(hudAlignmentX, isBeneficial, false, invert, 1);
             posY = getPrimaryEffectPos(hudAlignmentY, count, maxCount, true, 1);
         }
         BetterEffectHudAlignment timerPos = BetterEffectHudConfig.getInstance().timerPos;
@@ -142,8 +174,8 @@ public abstract class HudMixin {
         graphics.blitSprite(renderPipeline, location, posX + 3, posY + 3, width, height, color);
         graphics.pose().pushMatrix();
         graphics.pose().scale(guiDownscale);
-        BetterEffectHudLabel timerLabel = BetterEffectHudAbstractScreen.newLabel(Component.literal(getDuration(mobEffectInstance)), timerPosX, timerPosY, 0xFFFFFFFF, BetterEffectHudAlignment.TOP_LEFT, timerPos, true);
-        BetterEffectHudLabel potencyLabel = BetterEffectHudAbstractScreen.newLabel(Component.literal(getPotency(mobEffectInstance)), potencyPosX, potencyPosY, 0xFFFFFFFF, BetterEffectHudAlignment.TOP_LEFT, potencyPos, true);
+        BetterEffectHudLabel timerLabel = BetterEffectHudAbstractScreen.newLabel(Component.literal(getDuration(mobEffectInstance)), timerPosX, timerPosY, BetterEffectHudConfig.getInstance().timerColor.getColor(), BetterEffectHudAlignment.TOP_LEFT, timerPos, true);
+        BetterEffectHudLabel potencyLabel = BetterEffectHudAbstractScreen.newLabel(Component.literal(getPotency(mobEffectInstance)), potencyPosX, potencyPosY, BetterEffectHudConfig.getInstance().potencyColor.getColor(), BetterEffectHudAlignment.TOP_LEFT, potencyPos, true);
 
         if (BetterEffectHudConfig.getInstance().enableTimer) timerLabel.extractWidgetRenderState(graphics, 0, 0, 0);
         if (BetterEffectHudConfig.getInstance().enablePotency) potencyLabel.extractWidgetRenderState(graphics, 0, 0, 0);
@@ -251,34 +283,34 @@ public abstract class HudMixin {
 
     private int getPrimaryEffectPos(int hudAlignment, int count, int maxCount, boolean isY, float guiDownscale) {
         float pos = 0;
-        float windowSize = Minecraft.getInstance().getWindow().getGuiScaledWidth();
-        if (isY) {windowSize = Minecraft.getInstance().getWindow().getGuiScaledHeight();}
+        float windowSize = (isY) ? Minecraft.getInstance().getWindow().getGuiScaledHeight() : Minecraft.getInstance().getWindow().getGuiScaledWidth();
 
-        if (hudAlignment == 0) {
-            pos += 1;
-            pos += 25 * (count - 1);
-        }
-        if (hudAlignment == 1) {
-            pos += windowSize / 2;
-            pos -= 12.5f * maxCount;
-            pos += 25 * (count - 1);
-        }
-        if (hudAlignment == 2) {
-            pos += windowSize;
-            pos -= 25 * count;
+        switch (hudAlignment) {
+            case 0 -> {
+                pos += 1;
+                pos += 25 * (count - 1);
+            }
+            case 1 -> {
+                pos += windowSize / 2;
+                pos -= 12.5f * maxCount;
+                pos += 25 * (count - 1);
+            }
+            case 2 -> {
+                pos += windowSize;
+                pos -= 25 * count;
+            }
         }
         return Math.round(pos / guiDownscale);
     }
-    private int getSecondaryEffectPos(int hudAlignment, boolean isBeneficial, boolean isY, float guiDownscale) {
+    private int getSecondaryEffectPos(int hudAlignment, boolean isBeneficial, boolean isY, boolean invert, float guiDownscale) {
         int pos = 0;
-        int windowSize = Minecraft.getInstance().getWindow().getGuiScaledWidth();
-        if (isY) {windowSize = Minecraft.getInstance().getWindow().getGuiScaledHeight();}
-        if (hudAlignment == 0) {pos += 1;}
+        float windowSize = (isY) ? Minecraft.getInstance().getWindow().getGuiScaledHeight() : Minecraft.getInstance().getWindow().getGuiScaledWidth();
+        if (hudAlignment == 0) pos += 1;
 
         pos += (int) (windowSize * ((float) hudAlignment / 2));
         pos -= 50 * (hudAlignment / 2);
 
-        if (!isBeneficial) pos += 25;
+        if (!isBeneficial == invert) pos += 25;
         return Math.round(pos / guiDownscale);
     }
 
@@ -290,7 +322,8 @@ public abstract class HudMixin {
         return -1;
     }
 
-    private void drawDurationBar(GuiGraphicsExtractor graphics, int posX, int posY, int lengh, int color, boolean vertical, boolean otherside, boolean reverse, boolean out) {
+    private void drawDurationBar(GuiGraphicsExtractor graphics, int posX, int posY, float value, int color, boolean vertical, boolean otherside, boolean reverse, boolean out) {
+        int lengh = (int) Math.floor(value * 18);
         posX += 2;
         posY += 2;
         int offsetX = 0;
@@ -315,10 +348,10 @@ public abstract class HudMixin {
         graphics.fill(posX, posY, posX + offsetX,posY + offsetY, color);
     }
     private void drawDurationBarCircle(GuiGraphicsExtractor graphics, int posX, int posY, float barValue, int color, boolean out) {
-        drawDurationBar(graphics, posX, posY, (int) (inverseLerpClamp(0.5f, 0.75f, barValue) * 18), color, false, false, true, out);
-        drawDurationBar(graphics, posX, posY, (int) (inverseLerpClamp(0f, 0.25f, barValue) * 18), color, false, true, false, out);
-        drawDurationBar(graphics, posX, posY, (int) (inverseLerpClamp(0.75f, 1.00f, barValue) * 18), color, true, false, false, out);
-        drawDurationBar(graphics, posX, posY, (int) (inverseLerpClamp(0.25f, 0.5f, barValue) * 18), color, true, true, true, out);
+        drawDurationBar(graphics, posX, posY, inverseLerpClamp(0.5f, 0.75f, barValue), color, false, false, true, out);
+        drawDurationBar(graphics, posX, posY, inverseLerpClamp(0f, 0.25f, barValue), color, false, true, false, out);
+        drawDurationBar(graphics, posX, posY, inverseLerpClamp(0.75f, 1.00f, barValue), color, true, false, false, out);
+        drawDurationBar(graphics, posX, posY, inverseLerpClamp(0.25f, 0.5f, barValue), color, true, true, true, out);
     }
 
     private String getDuration(MobEffectInstance mobEffectInstance) {
@@ -373,17 +406,23 @@ public abstract class HudMixin {
     private int getColorOfMode(BetterEffectHudColorSetting color, MobEffectInstance mobEffectInstance) {
         int out = 0xFFFFFFFF;
         final int speed = Math.round(color.getSpeed() * 100);
-        final float brightness = Math.abs((((float) BetterEffectHudClient.colorTime / 255 * speed * 2) % (speed * 2)) - speed) * -1 + speed;
+        float time = (float) BetterEffectHudClient.colorTime / 255 * speed / 10;
         switch (color.getColorMode()) {
             case EFFECT_BENEFIT -> out = (mobEffectInstance.getEffect().value().isBeneficial()) ? 0xFF3750F0 : 0xFFE02040;
             case EFFECT_COLOR -> out = (mobEffectInstance.getEffect().value().getColor() & 0x00FFFFFF) + 0xFF000000;
             case EFFECT_DURATION -> out = getDurationColor(mobEffectInstance.getDuration());
-            case RAINBOW -> out = ARGB.color(255, Color.HSBtoRGB((((float) BetterEffectHudClient.colorTime / 255 * speed) % speed) / speed, 1.0f, 1.0f));
-            case MONOCHROME -> out = ARGB.color(255, Color.HSBtoRGB(1.0f, 0.0f, brightness));
-            case CUSTOM_BLINK -> out = ARGB.color(ARGB.alpha(color.getColor()), (int) (ARGB.red(color.getColor()) * brightness), (int) (ARGB.green(color.getColor()) * brightness), (int) (ARGB.blue(color.getColor()) * brightness));
+            case RAINBOW -> out = ARGB.color(255, Color.HSBtoRGB(time % 1.0f, 1.0f, 1.0f));
+            case MONOCHROME -> out = ARGB.color(255, Color.HSBtoRGB(1.0f, 0.0f, getBrightness(time * 5)));
+            case CUSTOM_GRADIENT -> out = BetterEffectHudColorGradientBox.getGradientPiece(time % 1.0f, color);
+            case CUSTOM_BLINK -> out = color.getColor() & ARGB.colorFromFloat(1f, getBrightness(time * 5), getBrightness(time * 5), getBrightness(time * 5));
             case CUSTOM -> out = color.getColor();
         }
         return out;
+    }
+
+    private static float getBrightness(float time) {
+        time = time % 2.0f;
+        return time > 1.0f ? 2.0f - time : time;
     }
 
     private float getNextUnit(float value, int index, int minUnit, int maxUnit) {

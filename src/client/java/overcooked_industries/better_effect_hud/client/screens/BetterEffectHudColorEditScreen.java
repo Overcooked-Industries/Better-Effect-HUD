@@ -7,6 +7,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.util.ARGB;
 import overcooked_industries.better_effect_hud.BetterEffectHud;
 import overcooked_industries.better_effect_hud.client.BetterEffectHudAlignment;
+import overcooked_industries.better_effect_hud.client.BetterEffectHudColorSetting;
 import overcooked_industries.better_effect_hud.client.BetterEffectHudConfig;
 import overcooked_industries.better_effect_hud.client.screens.elements.*;
 
@@ -28,6 +29,8 @@ public class BetterEffectHudColorEditScreen extends BetterEffectHudAbstractScree
 
     BetterEffectHudLabel colorText;
 
+    int gradientId;
+
     public void update() {
         int color = ARGB.color(alpha, red, green, blue);
         for (BetterEffectHudIntSlider slider : sliders) {slider.update();}
@@ -39,7 +42,10 @@ public class BetterEffectHudColorEditScreen extends BetterEffectHudAbstractScree
         colorText.setMessage(getColorAsHex(color));
         colorBox.setColor(color);
         colorBarAlpha.setColor((color & 0x00FFFFFF) | 0xFF000000);
-        handle.set(BetterEffectHudConfig.getInstance(), color);
+        BetterEffectHudColorSetting colorSetting = (BetterEffectHudColorSetting) handle.get(BetterEffectHudConfig.getInstance());
+        if (gradientId == -1) colorSetting.setColor(color);
+        else colorSetting.getColorGradient().get(gradientId).setColor(color);
+        handle.set(BetterEffectHudConfig.getInstance(), colorSetting);
         BetterEffectHudConfig.serialize();
     }
 
@@ -55,11 +61,14 @@ public class BetterEffectHudColorEditScreen extends BetterEffectHudAbstractScree
         return ARGB.color(255 - ARGB.alpha(color), 255 - ARGB.red(color), 255 - ARGB.green(color), 255 - ARGB.blue(color));
     }
 
-    public BetterEffectHudColorEditScreen(VarHandle handle, Screen screen) throws NoSuchFieldException, IllegalAccessException {
+    public BetterEffectHudColorEditScreen(VarHandle handle, Screen screen, int gradientId) throws NoSuchFieldException, IllegalAccessException {
         super();
+        this.gradientId = gradientId;
         this.handle = handle;
         this.screen = screen;
-        int color = (Integer) handle.get(BetterEffectHudConfig.getInstance());
+        BetterEffectHudColorSetting colorSetting = (BetterEffectHudColorSetting) handle.get(BetterEffectHudConfig.getInstance());
+        int color = colorSetting.getColor();
+        if (gradientId != -1) color = colorSetting.getColorGradient().get(gradientId).getColor();
         this.alpha = ARGB.alpha(color);
         this.red = ARGB.red(color);
         this.green = ARGB.green(color);
