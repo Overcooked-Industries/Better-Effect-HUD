@@ -101,7 +101,15 @@ public abstract class HudMixin {
         int backgroundColor = getColorOfMode((extra) ? BetterEffectHudConfig.getInstance().extraBackgroundColor : BetterEffectHudConfig.getInstance().backgroundColor, mobEffectInstance);
         int barColor = getColorOfMode(BetterEffectHudConfig.getInstance().barColor, mobEffectInstance);
 
-        graphics.blitSprite(renderPipeline, location, posX, posY, width, height, backgroundColor);
+        float backgroundAlpha = 1.0f;
+
+        if (mobEffectInstance.endsWithin(200) && BetterEffectHudConfig.getInstance().backgroundBlink) {
+            int remainingDuration = mobEffectInstance.getDuration() - 4;
+            int usedSeconds = 10 - remainingDuration / 20;
+            backgroundAlpha = Mth.clamp((float) remainingDuration / 10.0F / 5.0F * 0.5F, 0.0F, 0.5F) + Mth.cos((float) remainingDuration * (float) Math.PI / 5.0F) * Mth.clamp((float) usedSeconds / 10.0F * 0.25F, 0.0F, 0.25F);
+            backgroundAlpha = Mth.clamp(backgroundAlpha, 0.0F, 1.0F);
+        }
+        if (!BetterEffectHudConfig.getInstance().backgroundHide) graphics.blitSprite(renderPipeline, location, posX, posY, width, height, backgroundColor & ARGB.colorFromFloat(backgroundAlpha, 1, 1, 1));
         double barLocationId = BetterEffectHudConfig.getInstance().barLocationId;
         float barValue = (float) mobEffectInstance.getDuration() / currentMobEffectsMaxTime[indexOfEffectType(currentMobEffects, mobEffectInstance.getEffect().value())];
         boolean vertical = barLocationId % 2 == 1;
@@ -174,13 +182,14 @@ public abstract class HudMixin {
         graphics.blitSprite(renderPipeline, location, posX + 3, posY + 3, width, height, color);
         graphics.pose().pushMatrix();
         graphics.pose().scale(guiDownscale);
-        BetterEffectHudLabel timerLabel = BetterEffectHudAbstractScreen.newLabel(Component.literal(getDuration(mobEffectInstance)), timerPosX, timerPosY, BetterEffectHudConfig.getInstance().timerColor.getColor(), BetterEffectHudAlignment.TOP_LEFT, timerPos, true);
-        BetterEffectHudLabel potencyLabel = BetterEffectHudAbstractScreen.newLabel(Component.literal(getPotency(mobEffectInstance)), potencyPosX, potencyPosY, BetterEffectHudConfig.getInstance().potencyColor.getColor(), BetterEffectHudAlignment.TOP_LEFT, potencyPos, true);
+        BetterEffectHudLabel timerLabel = BetterEffectHudAbstractScreen.newLabel(Component.literal(getDuration(mobEffectInstance)), timerPosX, timerPosY, getColorOfMode(BetterEffectHudConfig.getInstance().timerColor, mobEffectInstance), BetterEffectHudAlignment.TOP_LEFT, timerPos, true);
+        BetterEffectHudLabel potencyLabel = BetterEffectHudAbstractScreen.newLabel(Component.literal(getPotency(mobEffectInstance)), potencyPosX, potencyPosY, getColorOfMode(BetterEffectHudConfig.getInstance().potencyColor, mobEffectInstance), BetterEffectHudAlignment.TOP_LEFT, potencyPos, true);
 
         if (BetterEffectHudConfig.getInstance().enableTimer) timerLabel.extractWidgetRenderState(graphics, 0, 0, 0);
         if (BetterEffectHudConfig.getInstance().enablePotency) potencyLabel.extractWidgetRenderState(graphics, 0, 0, 0);
         graphics.pose().scale(guiUpscale);
-        if (BetterEffectHudConfig.getInstance().enableWarning && mobEffectInstance.getDuration() < BetterEffectHudConfig.getInstance().warningTime * 20 && (BetterEffectHudConfig.getInstance().useEffectListWarning || Arrays.asList(BetterEffectHudConfig.getInstance().effectWarningIdentifiers).contains(location))) graphics.blit(renderPipeline, BetterEffectHud.id("textures/gui/effect_warning.png"), posX, posY, 0, 0, 8, 8, 8, 8, color);
+
+        if (BetterEffectHudConfig.getInstance().enableWarning && mobEffectInstance.getDuration() < BetterEffectHudConfig.getInstance().warningTime * 20) graphics.blit(renderPipeline, BetterEffectHud.id("textures/gui/effect_warning.png"), posX, posY, 0, 0, 8, 8, 8, 8, color);
         graphics.pose().popMatrix();
     }
 
@@ -226,6 +235,10 @@ public abstract class HudMixin {
         currentMobEffectsMaxTime = stillActiveMaxTime.stream().mapToInt(Integer::intValue).toArray();
 
         return activeEffects;
+    }
+    @WrapOperation(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/effect/MobEffectInstance;getDuration()I"), method = "extractEffects")
+    private int extractVignette(MobEffectInstance instance, Operation<Integer> original) {
+        return original.call(instance) - 4;
     }
 
     @WrapOperation(at = @At(value = "INVOKE", target = "Lnet/minecraft/util/ARGB;colorFromFloat(FFFF)I"), method = "extractVignette")
@@ -394,12 +407,18 @@ public abstract class HudMixin {
     }
 
     private int getDurationColor(int time) {
-        int out = 0xFFFFFFFF;
-        if (time < 100) out = 0xFFF01111;
-        if (100 <= time && time < 200) out = 0xFFF06010;
-        if (200 <= time && time < 400) out = 0xFFFFC010;
-        if (400 <= time && time < 1200) out = 0xFFDDFF10;
-        if (1200 <= time) out = 0xFF60B010;
+        return BetterEffectHudColorGradientBox.getGradientPiece((float) Math.clamp(time, 0, 2400) / 2400, BetterEffectHudConfig.getInstance().durationColor);
+    }
+
+    private int getPotencyColor(int potency) {
+        int out = BetterEffectHudConfig.getInstance().potencyColor5.getColor();
+        switch (potency) {
+            case 0 -> out = BetterEffectHudConfig.getInstance().potencyColor0.getColor();
+            case 1 -> out = BetterEffectHudConfig.getInstance().potencyColor1.getColor();
+            case 2 -> out = BetterEffectHudConfig.getInstance().potencyColor2.getColor();
+            case 3 -> out = BetterEffectHudConfig.getInstance().potencyColor3.getColor();
+            case 4 -> out = BetterEffectHudConfig.getInstance().potencyColor4.getColor();
+        }
         return out;
     }
 
@@ -408,9 +427,10 @@ public abstract class HudMixin {
         final int speed = Math.round(color.getSpeed() * 100);
         float time = (float) BetterEffectHudClient.colorTime / 255 * speed / 10;
         switch (color.getColorMode()) {
-            case EFFECT_BENEFIT -> out = (mobEffectInstance.getEffect().value().isBeneficial()) ? 0xFF3750F0 : 0xFFE02040;
+            case EFFECT_BENEFIT -> out = (mobEffectInstance.getEffect().value().isBeneficial()) ? getColorOfMode(BetterEffectHudConfig.getInstance().beneficialColor, mobEffectInstance) : getColorOfMode(BetterEffectHudConfig.getInstance().harmfulColor, mobEffectInstance);
             case EFFECT_COLOR -> out = (mobEffectInstance.getEffect().value().getColor() & 0x00FFFFFF) + 0xFF000000;
             case EFFECT_DURATION -> out = getDurationColor(mobEffectInstance.getDuration());
+            case EFFECT_POTENCY -> out = getPotencyColor(mobEffectInstance.getAmplifier());
             case RAINBOW -> out = ARGB.color(255, Color.HSBtoRGB(time % 1.0f, 1.0f, 1.0f));
             case MONOCHROME -> out = ARGB.color(255, Color.HSBtoRGB(1.0f, 0.0f, getBrightness(time * 5)));
             case CUSTOM_GRADIENT -> out = BetterEffectHudColorGradientBox.getGradientPiece(time % 1.0f, color);

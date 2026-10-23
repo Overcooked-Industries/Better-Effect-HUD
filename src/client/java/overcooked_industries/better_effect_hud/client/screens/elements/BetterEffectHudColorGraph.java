@@ -16,12 +16,11 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
-import org.jetbrains.annotations.Nullable;
 import overcooked_industries.better_effect_hud.client.screens.BetterEffectHudAbstractScreen;
 
 import java.lang.invoke.VarHandle;
 
-public class BetterEffectHudGraph extends AbstractWidget.WithInactiveMessage {
+public class BetterEffectHudColorGraph extends AbstractWidget.WithInactiveMessage {
     Identifier backgroundSprite;
     Identifier cursorSprite;
     int valueX;
@@ -45,7 +44,7 @@ public class BetterEffectHudGraph extends AbstractWidget.WithInactiveMessage {
         this.color = color;
     }
 
-    public BetterEffectHudGraph(int posX, int posY, int sizeX, int sizeY, int cursorSizeX, int cursorSizeY, Component message, Identifier backgroundSprite, Identifier cursorSprite, VarHandle handleX, VarHandle handleY, BetterEffectHudAbstractScreen.BetterEffectHudCallable updateFunction, Object configObject) {
+    public BetterEffectHudColorGraph(int posX, int posY, int sizeX, int sizeY, int cursorSizeX, int cursorSizeY, Component message, Identifier backgroundSprite, Identifier cursorSprite, VarHandle handleX, VarHandle handleY, BetterEffectHudAbstractScreen.BetterEffectHudCallable updateFunction, Object configObject) {
         super(posX, posY, sizeX, sizeY, message);
         this.valueX = (int) handleX.get(configObject);
         this.valueY = (int) handleY.get(configObject);

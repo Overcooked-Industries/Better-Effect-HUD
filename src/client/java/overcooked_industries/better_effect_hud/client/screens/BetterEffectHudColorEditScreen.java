@@ -22,7 +22,7 @@ public class BetterEffectHudColorEditScreen extends BetterEffectHudAbstractScree
     Integer green;
     Integer blue;
     BetterEffectHudTexture colorBox;
-    BetterEffectHudGraph colorGraph;
+    BetterEffectHudColorGraph colorGraph;
     BetterEffectHudColorSlider colorBarBlue;
     BetterEffectHudColorSlider colorBarAlpha;
     BetterEffectHudIntSlider[] sliders;
@@ -90,7 +90,7 @@ public class BetterEffectHudColorEditScreen extends BetterEffectHudAbstractScree
 
     protected void init() {
         addRenderableWidget(newLabel(Component.translatable("better_effect_hud.hud.color.title"), 0, 10, 0xFFFFFFFF, BetterEffectHudAlignment.TOP_MIDDLE, BetterEffectHudAlignment.TOP_MIDDLE, true));
-        addRenderableWidget(newButton(Component.translatable("gui.done"), (btn) -> Minecraft.getInstance().setScreenAndShow(screen), 0, -25, 200, 21, BetterEffectHudAlignment.BOTTOM_MIDDLE, false));
+        addRenderableWidget(newButton(0, -25, 200, 21, BetterEffectHudAlignment.BOTTOM_MIDDLE, Component.translatable("gui.done"), (btn) -> Minecraft.getInstance().setScreenAndShow(screen), false));
         for (BetterEffectHudIntSlider widget : sliders) {addRenderableWidget(widget);}
         addRenderableWidget(colorBox);
         addRenderableWidget(colorBarBlue);

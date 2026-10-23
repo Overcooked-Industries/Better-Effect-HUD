@@ -27,13 +27,11 @@ public class BetterEffectHudTempConfig {
 
     private BetterEffectHudTempConfig() {}
 
-    public static Object getField(String fieldName, Class<?> type) throws NoSuchFieldException, IllegalAccessException {
-        return varHandle(fieldName, type).get(getInstance());
-    }
-
     public static VarHandle varHandle(String fieldName, Class<?> type) throws NoSuchFieldException, IllegalAccessException {
         return MethodHandles.lookup().findVarHandle(BetterEffectHudTempConfig.class, fieldName, type);
     }
 
     public Boolean unlockReset = false;
+    public Boolean enableCustomTimerSize = false;
+    public Integer colorTab = 0;
 }

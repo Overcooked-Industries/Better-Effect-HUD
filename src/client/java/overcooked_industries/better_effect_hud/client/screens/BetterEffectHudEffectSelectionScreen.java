@@ -9,10 +9,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.effect.MobEffect;
-import overcooked_industries.better_effect_hud.BetterEffectHud;
 import overcooked_industries.better_effect_hud.client.BetterEffectHudConfig;
 import overcooked_industries.better_effect_hud.client.BetterEffectHudAlignment;
-import overcooked_industries.better_effect_hud.client.screens.elements.BetterEffectHudGraph;
 
 import java.lang.invoke.VarHandle;
 import java.util.Map;
@@ -35,7 +33,7 @@ public class BetterEffectHudEffectSelectionScreen extends BetterEffectHudAbstrac
             int width = Math.round((float) (Minecraft.getInstance().getWindow().getGuiScaledWidth() - 40) / 18) * 18;
             int posX = (int) (10 + Math.floor((float) ((i * 21) % width) / 21   ) * 21  + 3);
             int posY = (int) (34 + Math.floor((float) ( i * 21)          / width) * 21) + 3;
-            addRenderableWidget(BetterEffectHudAbstractScreen.newButton(Component.empty(),
+            addRenderableWidget(BetterEffectHudAbstractScreen.newButton(posX, posY, 21, 21, BetterEffectHudAlignment.TOP_LEFT, Component.empty(),
                     (btn) -> {
                         Identifier[] updatedIdentifiers = (Identifier[]) handle.get(BetterEffectHudConfig.getInstance());
                         updatedIdentifiers[index] = effect.getKey().identifier();
@@ -43,7 +41,6 @@ public class BetterEffectHudEffectSelectionScreen extends BetterEffectHudAbstrac
                         BetterEffectHudConfig.serialize();
                         Minecraft.getInstance().setScreenAndShow(screen);
                     },
-                    posX, posY, 21, 21, BetterEffectHudAlignment.TOP_LEFT,
                     false));
             addRenderableWidget(BetterEffectHudAbstractScreen.newTexture(
                     posX + 1, posY + 1, 18, 18, 0xFFFFFFFF,

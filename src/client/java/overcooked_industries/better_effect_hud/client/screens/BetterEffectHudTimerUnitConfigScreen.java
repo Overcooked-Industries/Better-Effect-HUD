@@ -21,7 +21,7 @@ public class BetterEffectHudTimerUnitConfigScreen extends BetterEffectHudAbstrac
     protected void init() {
         List<AbstractWidget> widgets = new ArrayList<>();
         widgets.add(newLabel(Component.translatable("better_effect_hud.hud.category.info.label.timer_unit_title"), 0, 10, 0xFFFFFFFF, BetterEffectHudAlignment.TOP_MIDDLE, BetterEffectHudAlignment.TOP_MIDDLE, true));
-        widgets.add(newButton(Component.translatable("gui.done"), (btn) -> Minecraft.getInstance().setScreenAndShow(screen), 0, -25, 200, 21, BetterEffectHudAlignment.BOTTOM_MIDDLE, false));
+        widgets.add(newButton(0, -25, 200, 21, BetterEffectHudAlignment.BOTTOM_MIDDLE, Component.translatable("gui.done"), (btn) -> Minecraft.getInstance().setScreenAndShow(screen), false));
         int unitMin = BetterEffectHudConfig.getInstance().timerMinUnit;
         int unitMax = BetterEffectHudConfig.getInstance().timerMaxUnit;
         String[] unitNames = new String[]{"T", "S", "M", "H", "D", "W", "Y"};
@@ -33,15 +33,14 @@ public class BetterEffectHudTimerUnitConfigScreen extends BetterEffectHudAbstrac
             if (i >= unitMin && i <= unitMax) prefix = "§a";
             if (i == unitMin || i == unitMax) prefix = "§e§l§n";
             widgets.add(
-                    BetterEffectHudAbstractScreen.newButton(Component.literal(prefix + unitNames[i]),
+                    BetterEffectHudAbstractScreen.newButton(boxPosX, 44, 17, 17, BetterEffectHudAlignment.TOP_MIDDLE, Component.literal(prefix + unitNames[i]),
                             (btn) -> {
                                 BetterEffectHudConfig.getInstance().timerUseMs = !BetterEffectHudConfig.getInstance().timerUseMs;
                                 BetterEffectHudConfig.serialize();
                                 Minecraft.getInstance().setScreenAndShow(this);
                             },
 
-                            boxPosX, 44, 17, 17,
-                            BetterEffectHudAlignment.TOP_MIDDLE, i != 0)
+                            i != 0)
             );
             widgets.add(
                     BetterEffectHudAbstractScreen.newCustomCheckbox(Component.literal(""), boxPosX, 61, (checkbox, value) -> {
@@ -76,9 +75,8 @@ public class BetterEffectHudTimerUnitConfigScreen extends BetterEffectHudAbstrac
             );
             if (i == 0) {
                 widgets.add(
-                        BetterEffectHudAbstractScreen.newButton(Component.empty(), (btn) -> {},
-                                boxPosX, 112, 17, 17,
-                                BetterEffectHudAlignment.TOP_MIDDLE, true
+                        BetterEffectHudAbstractScreen.newButton(boxPosX, 112, 17, 17, BetterEffectHudAlignment.TOP_MIDDLE, Component.empty(), (btn) -> {},
+                                true
                         )
                 );
             } else {

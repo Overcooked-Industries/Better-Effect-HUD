@@ -1,30 +1,40 @@
 package overcooked_industries.better_effect_hud.client.screens;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.tabs.Tab;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import overcooked_industries.better_effect_hud.client.screens.config_tabs.*;
 import overcooked_industries.better_effect_hud.client.BetterEffectHudAlignment;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class BetterEffectHudConfigScreen extends BetterEffectHudAbstractTabScreen {
+    int subpage;
 
     public BetterEffectHudConfigScreen(int page, Screen parent) {
         super(page, parent);
     }
 
-    protected void init() {
-        List<Tab> tabs = new ArrayList<>();
-        tabs.add(new GeneralTab(parent, Component.translatable("better_effect_hud.hud.category.general"), 0));
-        tabs.add(new InfoTab(parent, Component.translatable("better_effect_hud.hud.category.info"), 1));
-        tabs.add(new DurationBarTab(parent, Component.translatable("better_effect_hud.hud.category.duration_bar"), 2));
-        tabs.add(new WarningTab(parent, Component.translatable("better_effect_hud.hud.category.warning"), 3));
-        tabs.add(new DisplayTab(parent, Component.translatable("better_effect_hud.hud.category.display"), 4));
+    @Override
+    public BetterEffectHudAbstractTabScreen copy() {
+        return new BetterEffectHudConfigScreen(page, parent);
+    }
 
-        addRenderableWidget(newTabNavigationBar(this, tabs, page));
-        addRenderableWidget(BetterEffectHudAbstractScreen.newButton(Component.translatable("gui.done"), (btn) -> Minecraft.getInstance().setScreenAndShow(parent), 0, -25, 200, 21, BetterEffectHudAlignment.BOTTOM_MIDDLE, false));
+    protected void init() {
+        try {
+            List<BetterEffectHudAbstractTab> tabs = newTabList(
+                    this,
+                    new GeneralTab(parent),
+                    new InfoTab(parent),
+                    new DurationBarTab(parent),
+                    new WarningTab(parent),
+                    new DisplayTab(parent),
+                    new ColorsTab(parent)
+            );
+            addRenderableWidget(newTabNavigationBar(this, tabs, this.page, 0));
+            addRenderableWidget(BetterEffectHudAbstractScreen.newButton(0, -25, 200, 21, BetterEffectHudAlignment.BOTTOM_MIDDLE, Component.translatable("gui.done"), (btn) -> Minecraft.getInstance().setScreenAndShow(parent), false));
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

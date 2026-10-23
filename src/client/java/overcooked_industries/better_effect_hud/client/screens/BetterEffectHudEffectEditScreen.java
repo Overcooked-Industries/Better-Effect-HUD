@@ -30,22 +30,22 @@ public class BetterEffectHudEffectEditScreen extends BetterEffectHudAbstractScre
         } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
-        addRenderableWidget(BetterEffectHudAbstractScreen.newButton(Component.literal("+"), (btn) -> {
+        addRenderableWidget(BetterEffectHudAbstractScreen.newButton(13, 13, 21, 21, BetterEffectHudAlignment.TOP_LEFT, Component.literal("+"), (btn) -> {
             Identifier[] identifiers = (Identifier[]) handle.get(BetterEffectHudConfig.getInstance());
             Identifier[] updatedIdentifiers = Arrays.copyOf(identifiers, identifiers.length + 1);
             updatedIdentifiers[identifiers.length] = Identifier.withDefaultNamespace("strength");
             handle.set(BetterEffectHudConfig.getInstance(), updatedIdentifiers);
             BetterEffectHudConfig.serialize();
             Minecraft.getInstance().setScreenAndShow(plusButtonScreen);
-        }, 13,  13, 21, 21, BetterEffectHudAlignment.TOP_LEFT, false));
-        addRenderableWidget(BetterEffectHudAbstractScreen.newButton(Component.translatable("gui.done"), (btn) -> Minecraft.getInstance().setScreenAndShow(screen), 0, -25, 200, 21, BetterEffectHudAlignment.BOTTOM_MIDDLE, false));
+        }, false));
+        addRenderableWidget(BetterEffectHudAbstractScreen.newButton(0, -25, 200, 21, BetterEffectHudAlignment.BOTTOM_MIDDLE, Component.translatable("gui.done"), (btn) -> Minecraft.getInstance().setScreenAndShow(screen), false));
         int i = 0;
         for (Identifier effect : value) {
             int width = Math.round((float) (Minecraft.getInstance().getWindow().getGuiScaledWidth() - 40) / 18) * 18;
             int posX = (int) (10 + Math.floor((float) ((i * 21) % width) / 21   ) * 21  + 3);
             int posY = (int) (34 + Math.floor((float) ( i * 21)          / width) * 21) + 3;
             int finalI = i;
-            addRenderableWidget(BetterEffectHudAbstractScreen.newButton(Component.empty(),
+            addRenderableWidget(BetterEffectHudAbstractScreen.newButton(posX, posY, 21, 21, BetterEffectHudAlignment.TOP_LEFT, Component.empty(),
                     (btn) -> {
                         Identifier[] identifiers = (Identifier[]) handle.get(BetterEffectHudConfig.getInstance());
                         Identifier[] updatedIdentifiers = new Identifier[identifiers.length - 1];
@@ -57,7 +57,6 @@ public class BetterEffectHudEffectEditScreen extends BetterEffectHudAbstractScre
                         BetterEffectHudConfig.serialize();
                         Minecraft.getInstance().setScreenAndShow(this);
                     },
-                    posX, posY, 21, 21, BetterEffectHudAlignment.TOP_LEFT,
                     false));
             addRenderableWidget(BetterEffectHudAbstractScreen.newTexture(
                     posX + 1, posY + 1, 18, 18, 0xFFFFFFFF,

@@ -1,19 +1,22 @@
 package overcooked_industries.better_effect_hud.client;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
-public enum BetterEffectHudColorModes {
+public enum BetterEffectHudColorMode {
     EFFECT_BENEFIT,
     EFFECT_COLOR,
     EFFECT_DURATION,
+    EFFECT_POTENCY,
     RAINBOW,
     MONOCHROME,
     CUSTOM_GRADIENT,
     CUSTOM_BLINK,
     CUSTOM;
 
-    public BetterEffectHudColorModes next() {
+    public BetterEffectHudColorMode next() {
         return values()[(this.ordinal() + 1) % values().length];
     }
 

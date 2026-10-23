@@ -8,15 +8,16 @@ import overcooked_industries.better_effect_hud.client.BetterEffectHudColorSettin
 import overcooked_industries.better_effect_hud.client.BetterEffectHudConfig;
 import overcooked_industries.better_effect_hud.client.screens.BetterEffectHudAbstractScreen;
 import overcooked_industries.better_effect_hud.client.BetterEffectHudAlignment;
-import overcooked_industries.better_effect_hud.client.screens.BetterEffectHudConfigScreen;
 import overcooked_industries.better_effect_hud.client.screens.BetterEffectHudEffectEditScreen;
 
 import java.util.*;
 
 public class DisplayTab extends BetterEffectHudAbstractTab {
-    public DisplayTab(Screen parent, Component title, int page) {
-        super(parent, title, page);
-        try {
+    public DisplayTab(Screen parent) {
+        super(parent, Component.translatable("better_effect_hud.hud.category.display"));
+    }
+
+    public void initialize() throws NoSuchFieldException, IllegalAccessException {
             BetterEffectHudEffectEditScreen betterEffectHudEffectEditScreen = new BetterEffectHudEffectEditScreen("extraEffectIdentifiers", screen);
             List<AbstractWidget> widgets = new ArrayList<>();
             widgets.add(BetterEffectHudAbstractScreen.newLabel(Component.translatable("better_effect_hud.hud.category.display.label.hud_alignment"), 10, 25, 0xFFFFFFFF, BetterEffectHudAlignment.TOP_LEFT, BetterEffectHudAlignment.TOP_LEFT, true));
@@ -35,10 +36,9 @@ public class DisplayTab extends BetterEffectHudAbstractTab {
             widgets.add(BetterEffectHudAbstractScreen.newToggleButton(Component.translatable("better_effect_hud.hud.category.display.toggle_button.extra_hud_invert"), 105, 65, 200, 21, BetterEffectHudAlignment.TOP_MIDDLE, BetterEffectHudConfig.varHandle("extraHudInvert", Boolean.class), screen, false));
             widgets.addAll(BetterEffectHudAbstractScreen.newColorSetting(Component.translatable("better_effect_hud.hud.category.display.color_mode_button.background_color_mode"), BetterEffectHudConfig.varHandle("backgroundColor", BetterEffectHudColorSetting.class), BetterEffectHudConfig::serialize, BetterEffectHudConfig.getInstance(), screen, -105, 96, 200, 21, BetterEffectHudAlignment.TOP_MIDDLE, BetterEffectHudAlignment.BOTTOM_MIDDLE, false));
             widgets.addAll(BetterEffectHudAbstractScreen.newColorSetting(Component.translatable("better_effect_hud.hud.category.display.color_mode_button.extra_background_color_mode"), BetterEffectHudConfig.varHandle("extraBackgroundColor", BetterEffectHudColorSetting.class), BetterEffectHudConfig::serialize, BetterEffectHudConfig.getInstance(), screen, 105, 96, 200, 21, BetterEffectHudAlignment.TOP_MIDDLE, BetterEffectHudAlignment.BOTTOM_MIDDLE, false));
-            widgets.add(BetterEffectHudAbstractScreen.newButton(Component.translatable("better_effect_hud.hud.category.display.button.edit_extra_effects"), (btn) -> {Minecraft.getInstance().setScreenAndShow(betterEffectHudEffectEditScreen);}, 0, 158, 410, 21, BetterEffectHudAlignment.TOP_MIDDLE, false));
+            widgets.add(BetterEffectHudAbstractScreen.newButton(0, 158, 410, 21, BetterEffectHudAlignment.TOP_MIDDLE, Component.translatable("better_effect_hud.hud.category.display.button.edit_extra_effects"), (btn) -> {Minecraft.getInstance().setScreenAndShow(betterEffectHudEffectEditScreen);}, false));
+        widgets.add(BetterEffectHudAbstractScreen.newToggleButton(Component.translatable("better_effect_hud.hud.category.display.toggle_button.background_hide"), -105, 189, 200, 21, BetterEffectHudAlignment.TOP_MIDDLE, BetterEffectHudConfig.varHandle("backgroundHide", Boolean.class), screen, false));
+        widgets.add(BetterEffectHudAbstractScreen.newToggleButton(Component.translatable("better_effect_hud.hud.category.display.toggle_button.background_blink"), 105, 189, 200, 21, BetterEffectHudAlignment.TOP_MIDDLE, BetterEffectHudConfig.varHandle("backgroundBlink", Boolean.class), screen, false));
             for (AbstractWidget widget : widgets) {layout.addChild(widget, 0, 0);}
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
     }
 }
