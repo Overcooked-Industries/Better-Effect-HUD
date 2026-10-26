@@ -143,7 +143,7 @@ public abstract class BetterEffectHudAbstractScreen extends Screen {
         return editBox;
     }
 
-    public static BetterEffectHudSlider newSlider(Component title, int posX, int posY, int sizeX, int sizeY, VarHandle handle, double min, double max, BetterEffectHudAlignment alignment, BetterEffectHudCallable handleUpdate, Object handleObject) throws NoSuchFieldException, IllegalAccessException {
+    public static BetterEffectHudSlider newSlider(Component title, int posX, int posY, int sizeX, int sizeY, VarHandle handle, double min, double max, BetterEffectHudAlignment alignment, BetterEffectHudCallable handleUpdate, Object handleObject, Component tooltip) {
         return new BetterEffectHudSlider(
                 getAlignedPos(posX, sizeX, Minecraft.getInstance().getWindow().getGuiScaledWidth(), alignment.posX),
                 getAlignedPos(posY, sizeY, Minecraft.getInstance().getWindow().getGuiScaledHeight(), alignment.posY),
@@ -154,10 +154,11 @@ public abstract class BetterEffectHudAbstractScreen extends Screen {
                 min,
                 max,
                 handleUpdate,
-                handleObject
+                handleObject,
+                tooltip
         );
     }
-    public static BetterEffectHudIntSlider newIntSlider(Component title, int posX, int posY, int sizeX, int sizeY, VarHandle handle, int min, int max, BetterEffectHudAlignment alignment, BetterEffectHudCallable handleUpdate, Object handleObject) throws NoSuchFieldException, IllegalAccessException {
+    public static BetterEffectHudIntSlider newIntSlider(Component title, int posX, int posY, int sizeX, int sizeY, VarHandle handle, int min, int max, BetterEffectHudAlignment alignment, BetterEffectHudCallable handleUpdate, Object handleObject, Component tooltip) throws NoSuchFieldException, IllegalAccessException {
         return new BetterEffectHudIntSlider(
                 getAlignedPos(posX, sizeX, Minecraft.getInstance().getWindow().getGuiScaledWidth(), alignment.posX),
                 getAlignedPos(posY, sizeY, Minecraft.getInstance().getWindow().getGuiScaledHeight(), alignment.posY),
@@ -168,7 +169,8 @@ public abstract class BetterEffectHudAbstractScreen extends Screen {
                 min,
                 max,
                 handleUpdate,
-                handleObject
+                handleObject,
+                tooltip
         );
     }
     public static BetterEffectHudColorSlider newColorSlider(int posX, int posY, BetterEffectHudAlignment alignment, Identifier backgroundSprite, VarHandle handle, BetterEffectHudCallable handleUpdate, Object handleObject) {
@@ -206,7 +208,6 @@ public abstract class BetterEffectHudAbstractScreen extends Screen {
     private static Checkbox newCheckboxBuild(Component title, int posX, int posY, VarHandle handle, Screen screen, BetterEffectHudAlignment alignment, Component tooltip, BetterEffectHudCallable handleUpdate, Object handleObject) {
         Boolean selected = (Boolean) handle.get(handleObject);
         return Checkbox.builder(title, Minecraft.getInstance().font)
-                .tooltip(Tooltip.create(tooltip))
                 .pos(getAlignedPos(posX, 17, Minecraft.getInstance().getWindow().getGuiScaledWidth(), alignment.posX), getAlignedPos(posY, 17, Minecraft.getInstance().getWindow().getGuiScaledHeight(), alignment.posY))
                 .selected(selected)
                 .onValueChange((checkbox, value) -> {
@@ -214,6 +215,7 @@ public abstract class BetterEffectHudAbstractScreen extends Screen {
                     handleUpdate.call();
                     Minecraft.getInstance().gui.setScreen(screen);
                 })
+                .tooltip(Tooltip.create(tooltip))
                 .build();
     }
     public static Checkbox newCheckbox(Component title, int posX, int posY, VarHandle handle, Screen screen, BetterEffectHudAlignment alignment, BetterEffectHudCallable handleUpdate, Object handleObject) {
@@ -337,7 +339,7 @@ public abstract class BetterEffectHudAbstractScreen extends Screen {
                         if (string.equals("RANDOM")) editBoxRefObj.setValue(String.format("FF%s%s%s", getRandomHexColor(), getRandomHexColor(), getRandomHexColor()));
                         if (string.equals("CRASH")) {
                             Minecraft.getInstance().stop();
-                            throw new RuntimeException(Component.translatable("better_effect_hud.hud.easteregg.crash").getString());
+                            throw new RuntimeException("\"Well, it crashed the game! What did you think, was gonna happen? Free diamonds? A Minecraft Marketplace Add-On? A cookie? No, it truly was a game crash.\"");
                         }
                         if (!editBoxRefObj.getValue().equals(editBoxRefObj.getValue().toUpperCase())) editBoxRefObj.setValue(editBoxRefObj.getValue().toUpperCase());
                     }
@@ -372,7 +374,7 @@ public abstract class BetterEffectHudAbstractScreen extends Screen {
         );
     }
 
-    public static List<AbstractWidget> newColorSetting(Component title, VarHandle handle, BetterEffectHudCallable handleUpdate, Object handleObject, Screen screen, int posX, int posY, int sizeX, int sizeY, BetterEffectHudAlignment alignment, BetterEffectHudAlignment extraButtonsAlignment, boolean disabled) throws NoSuchFieldException, IllegalAccessException {
+    public static List<AbstractWidget> newColorSetting(Component title, VarHandle handle, BetterEffectHudCallable handleUpdate, Object handleObject, Screen screen, int posX, int posY, int sizeX, int sizeY, BetterEffectHudAlignment alignment, BetterEffectHudAlignment extraButtonsAlignment, boolean disabled, Component tooltip) {
         List<AbstractWidget> out = new ArrayList<>();
         BetterEffectHudColorSetting colorSetting = (BetterEffectHudColorSetting) handle.get(handleObject);
         out.add(BetterEffectHudAbstractScreen.newButton(
@@ -389,7 +391,7 @@ public abstract class BetterEffectHudAbstractScreen extends Screen {
                     handleUpdate.call();
                     Minecraft.getInstance().setScreenAndShow(screen);
                 },
-                disabled
+                disabled, tooltip
         ));
         int extraPosX = posX + (sizeX + 10) * (extraButtonsAlignment.posX - 1);
         int extraPosY = posY + (sizeY + 10) * (extraButtonsAlignment.posY - 1);

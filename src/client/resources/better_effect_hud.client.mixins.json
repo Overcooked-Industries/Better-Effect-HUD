@@ -3,8 +3,7 @@
 	"package": "overcooked_industries.better_effect_hud.client.mixin",
 	"compatibilityLevel": "JAVA_25",
 	"client": [
-		"HudMixin",
-		"GameRendererMixin"
+		"HudMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

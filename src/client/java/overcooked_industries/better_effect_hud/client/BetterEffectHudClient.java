@@ -1,14 +1,15 @@
 package overcooked_industries.better_effect_hud.client;
 
 import net.fabricmc.api.ClientModInitializer;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
+import org.spongepowered.asm.mixin.Unique;
 
 public class BetterEffectHudClient implements ClientModInitializer {
-	public static int colorTime = 0;
+
 	@Override
 	public void onInitializeClient() {
 		BetterEffectHudConfig.deserialize();
-	}
-	public static void incrementColorTime() {
-		colorTime += 1;
 	}
 }

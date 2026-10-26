@@ -101,7 +101,7 @@ public class BetterEffectHudTimerUnitConfigScreen extends BetterEffectHudAbstrac
         widgets.add(BetterEffectHudAbstractScreen.newLabel(Component.translatable("better_effect_hud.hud.category.info.label.decimal"), -60, 100, 0xFFFFFFFF, BetterEffectHudAlignment.TOP_MIDDLE, BetterEffectHudAlignment.TOP_RIGHT, true));
         widgets.add(BetterEffectHudAbstractScreen.newLabel(Component.translatable("better_effect_hud.hud.category.info.label.double"), -60, 117, 0xFFFFFFFF, BetterEffectHudAlignment.TOP_MIDDLE, BetterEffectHudAlignment.TOP_RIGHT, true));
         try {
-            widgets.add(BetterEffectHudAbstractScreen.newIntSlider(Component.translatable("better_effect_hud.hud.category.info.slider.decimal_count"), 0, 139, 200, 21, BetterEffectHudConfig.varHandle("timerDecimalCount", Integer.class), 0, 10, BetterEffectHudAlignment.TOP_MIDDLE, BetterEffectHudConfig::serialize, BetterEffectHudConfig.getInstance()));
+            widgets.add(BetterEffectHudAbstractScreen.newIntSlider(Component.translatable("better_effect_hud.hud.category.info.slider.decimal_count"), 0, 139, 200, 21, BetterEffectHudConfig.varHandle("timerDecimalCount", Integer.class), 0, 10, BetterEffectHudAlignment.TOP_MIDDLE, BetterEffectHudConfig::serialize, BetterEffectHudConfig.getInstance(), Component.translatable("better_effect_hud.hud.help.category.info.slider.decimal_count")));
         } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }

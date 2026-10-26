@@ -10,9 +10,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.Hud;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffect;
@@ -48,6 +52,11 @@ public abstract class HudMixin {
     @Unique public int harmfulCount = 0;
     @Unique public int extraBeneficialCount = 0;
     @Unique public int extraHarmfulCount = 0;
+    @Unique public int colorTime = 0;
+    @Unique public int subColorTime = 0;
+    @Unique public boolean playWarningSound = false;
+    @Unique public boolean playedWarningSound = false;
+    @Unique public int warningSoundLoopCooldown = 0;
 
     @Inject(method = "extractEffects", at = @At("HEAD"))
     private void extractEffects(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker, CallbackInfo ci) {
@@ -164,6 +173,7 @@ public abstract class HudMixin {
         ) {
             warningTargetColor = effect.getColor() & 0x00FFFFFF;
         }
+        if (mobEffectInstance.getDuration() < BetterEffectHudConfig.getInstance().soundTime * 20) playWarningSound = true;
 
         int posX = getPrimaryEffectPos(hudAlignmentX, count, maxCount, false, 1);
         int posY = getSecondaryEffectPos(hudAlignmentY, isBeneficial, true, invert, 1);
@@ -174,10 +184,20 @@ public abstract class HudMixin {
         BetterEffectHudAlignment timerPos = BetterEffectHudConfig.getInstance().timerPos;
         BetterEffectHudAlignment potencyPos = BetterEffectHudConfig.getInstance().potencyPos;
 
-        int timerPosX = Math.round((posX + 3 + 9 * timerPos.posX) * guiUpscale);
-        int timerPosY = Math.round((posY + 3 + 9 * timerPos.posY) * guiUpscale);
-        int potencyPosX = Math.round((posX + 3 + 9 * potencyPos.posX) * guiUpscale);
-        int potencyPosY = Math.round((posY + 3 + 9 * potencyPos.posY) * guiUpscale);
+        int timerGapX = 3 + 2 * (timerPos.posX - 1);
+        int timerGapY = 3 + 2 * (timerPos.posY - 1);
+        int potencyGapX = 3 + 2 * (potencyPos.posX - 1);
+        int potencyGapY = 3 + 2 * (potencyPos.posY - 1);
+        if (BetterEffectHudConfig.getInstance().enableInfoGap) {
+            timerGapX = 3;
+            timerGapY = 3;
+            potencyGapX = 3;
+            potencyGapY = 3;
+        }
+        int timerPosX = Math.round((posX + timerGapX + 10 * timerPos.posX) * guiUpscale);
+        int timerPosY = Math.round((posY + timerGapY + 10 * timerPos.posY) * guiUpscale);
+        int potencyPosX = Math.round((posX + potencyGapX + 10 * potencyPos.posX) * guiUpscale);
+        int potencyPosY = Math.round((posY + potencyGapY + 10 * potencyPos.posY) * guiUpscale);
 
         graphics.blitSprite(renderPipeline, location, posX + 3, posY + 3, width, height, color);
         graphics.pose().pushMatrix();
@@ -195,6 +215,12 @@ public abstract class HudMixin {
 
     @WrapOperation(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;getActiveEffects()Ljava/util/Collection;"), method = "extractEffects")
     private Collection<MobEffectInstance> setCurrentEffects(LocalPlayer instance, Operation<Collection<MobEffectInstance>> original) {
+        subColorTime += 1;
+        if (subColorTime >= Minecraft.getInstance().getFps() / 25) {
+            incrementColorTime();
+            subColorTime = 0;
+        }
+        updateWarningSound();
         if (!BetterEffectHudConfig.getInstance().enableMod) return original.call(instance);
         Collection<MobEffectInstance> activeEffects = original.call(instance);
         if (currentMobEffects == null) currentMobEffects = new MobEffectInstance[0];
@@ -237,7 +263,7 @@ public abstract class HudMixin {
         return activeEffects;
     }
     @WrapOperation(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/effect/MobEffectInstance;getDuration()I"), method = "extractEffects")
-    private int extractVignette(MobEffectInstance instance, Operation<Integer> original) {
+    private int getDuration(MobEffectInstance instance, Operation<Integer> original) {
         return original.call(instance) - 4;
     }
 
@@ -402,8 +428,10 @@ public abstract class HudMixin {
     }
     private String getPotency(MobEffectInstance mobEffectInstance) {
         int potency = mobEffectInstance.getAmplifier();
-        if (potency == 0 && BetterEffectHudConfig.getInstance().enableFirstPotency) return "I";
-        return Component.translatableWithFallback("potion.potency." + potency, String.valueOf(potency)).getString();
+        if ((!BetterEffectHudConfig.getInstance().enableFirstPotency) && potency == 0) return "";
+        if (BetterEffectHudConfig.getInstance().enableFirstPotency && !BetterEffectHudConfig.getInstance().enableNumberPotency && potency == 0) return "I";
+        if (!BetterEffectHudConfig.getInstance().enableNumberPotency) return Component.translatableWithFallback("potion.potency." + potency, String.valueOf(potency + 1)).getString();
+        return String.valueOf(potency + 1);
     }
 
     private int getDurationColor(int time) {
@@ -425,7 +453,7 @@ public abstract class HudMixin {
     private int getColorOfMode(BetterEffectHudColorSetting color, MobEffectInstance mobEffectInstance) {
         int out = 0xFFFFFFFF;
         final int speed = Math.round(color.getSpeed() * 100);
-        float time = (float) BetterEffectHudClient.colorTime / 255 * speed / 10;
+        float time = (float) colorTime / 255 * speed / 10;
         switch (color.getColorMode()) {
             case EFFECT_BENEFIT -> out = (mobEffectInstance.getEffect().value().isBeneficial()) ? getColorOfMode(BetterEffectHudConfig.getInstance().beneficialColor, mobEffectInstance) : getColorOfMode(BetterEffectHudConfig.getInstance().harmfulColor, mobEffectInstance);
             case EFFECT_COLOR -> out = (mobEffectInstance.getEffect().value().getColor() & 0x00FFFFFF) + 0xFF000000;
@@ -462,6 +490,21 @@ public abstract class HudMixin {
 
     private float inverseLerpClamp(float min, float max, float number) {
         return Math.clamp((number - min) / (max - min), 0, 1);
+    }
+
+    public void incrementColorTime() {
+        colorTime += 1;
+    }
+    public void updateWarningSound() {
+        SimpleSoundInstance warningSound = SimpleSoundInstance.forUI(SoundEvents.NOTE_BLOCK_PLING.value(), 1.0F, 2f);
+
+        if (!playedWarningSound && playWarningSound && BetterEffectHudConfig.getInstance().enableSound && !Minecraft.getInstance().isPaused()) Minecraft.getInstance().getSoundManager().play(warningSound);
+        warningSoundLoopCooldown -= 1;
+        if (playedWarningSound && !playWarningSound) playedWarningSound = false;
+        if (playWarningSound) playedWarningSound = true;
+        if (BetterEffectHudConfig.getInstance().loopSound && warningSoundLoopCooldown <= 0) {playedWarningSound = false; warningSoundLoopCooldown = Minecraft.getInstance().getFps() / 2;}
+        if (!playedWarningSound) warningSoundLoopCooldown = Minecraft.getInstance().getFps() / 2;
+        playWarningSound = false;
     }
 
 }

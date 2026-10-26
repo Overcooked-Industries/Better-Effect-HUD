@@ -108,6 +108,10 @@ public class BetterEffectHudConfig {
     public Integer vignetteTime = 10;
     public Integer vignetteTransparency = 100;
 
+    public Boolean enableSound = false;
+    public Integer soundTime = 10;
+    public Boolean loopSound = false;
+
     public Identifier[] effectWarningIdentifiers = {Identifier.withDefaultNamespace("strength"), Identifier.withDefaultNamespace("speed"), Identifier.withDefaultNamespace("fire_resistance")};
     //Display
     public BetterEffectHudAlignment hudAlignment = BetterEffectHudAlignment.TOP_RIGHT;

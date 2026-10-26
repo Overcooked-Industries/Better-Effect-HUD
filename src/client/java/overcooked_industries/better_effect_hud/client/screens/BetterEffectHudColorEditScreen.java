@@ -79,10 +79,10 @@ public class BetterEffectHudColorEditScreen extends BetterEffectHudAbstractScree
 
         this.colorText = newLabel(getColorAsHex(color), 0, 145, (invertColor(color) & 0x00FFFFFF) | 0xFF000000, BetterEffectHudAlignment.TOP_MIDDLE, BetterEffectHudAlignment.MIDDLE_MIDDLE, false);
         this.sliders = new BetterEffectHudIntSlider[]{
-                newIntSlider(Component.translatable("better_effect_hud.hud.color.red"), -105, 155, 200, 21, varHandle("red", Integer.class), 0, 255, BetterEffectHudAlignment.TOP_MIDDLE, this::update, this),
-                newIntSlider(Component.translatable("better_effect_hud.hud.color.green"), 105, 155, 200, 21, varHandle("green", Integer.class), 0, 255, BetterEffectHudAlignment.TOP_MIDDLE, this::update, this),
-                newIntSlider(Component.translatable("better_effect_hud.hud.color.blue"), -105, 186, 200, 21, varHandle("blue", Integer.class), 0, 255, BetterEffectHudAlignment.TOP_MIDDLE, this::update, this),
-                newIntSlider(Component.translatable("better_effect_hud.hud.color.alpha"), 105, 186, 200, 21, varHandle("alpha", Integer.class), 0, 255, BetterEffectHudAlignment.TOP_MIDDLE, this::update, this),
+                newIntSlider(Component.translatable("better_effect_hud.hud.color.red"), -105, 155, 200, 21, varHandle("red", Integer.class), 0, 255, BetterEffectHudAlignment.TOP_MIDDLE, this::update, this, Component.empty()),
+                newIntSlider(Component.translatable("better_effect_hud.hud.color.green"), 105, 155, 200, 21, varHandle("green", Integer.class), 0, 255, BetterEffectHudAlignment.TOP_MIDDLE, this::update, this, Component.empty()),
+                newIntSlider(Component.translatable("better_effect_hud.hud.color.blue"), -105, 186, 200, 21, varHandle("blue", Integer.class), 0, 255, BetterEffectHudAlignment.TOP_MIDDLE, this::update, this, Component.empty()),
+                newIntSlider(Component.translatable("better_effect_hud.hud.color.alpha"), 105, 186, 200, 21, varHandle("alpha", Integer.class), 0, 255, BetterEffectHudAlignment.TOP_MIDDLE, this::update, this, Component.empty()),
         };
         this.colorGraph = newGraph(0, 34, 100, 100, BetterEffectHudAlignment.TOP_MIDDLE, 5, 5, BetterEffectHud.id("textures/gui/color_graph.png"), BetterEffectHud.id("textures/gui/color_cursor.png"), varHandle("red", Integer.class), varHandle("green", Integer.class), this::update, this);
         update();

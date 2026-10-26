@@ -24,12 +24,12 @@ public class BetterEffectHudConfigScreen extends BetterEffectHudAbstractTabScree
         try {
             List<BetterEffectHudAbstractTab> tabs = newTabList(
                     this,
-                    new GeneralTab(parent),
-                    new InfoTab(parent),
-                    new DurationBarTab(parent),
-                    new WarningTab(parent),
-                    new DisplayTab(parent),
-                    new ColorsTab(parent)
+                    new BetterEffectHudGeneralTab(parent),
+                    new BetterEffectHudInfoTab(parent),
+                    new BetterEffectHudDurationBarTab(parent),
+                    new BetterEffectHudWarningTab(parent),
+                    new BetterEffectHudDisplayTab(parent),
+                    new BetterEffectHudColorsTab(parent)
             );
             addRenderableWidget(newTabNavigationBar(this, tabs, this.page, 0));
             addRenderableWidget(BetterEffectHudAbstractScreen.newButton(0, -25, 200, 21, BetterEffectHudAlignment.BOTTOM_MIDDLE, Component.translatable("gui.done"), (btn) -> Minecraft.getInstance().setScreenAndShow(parent), false));

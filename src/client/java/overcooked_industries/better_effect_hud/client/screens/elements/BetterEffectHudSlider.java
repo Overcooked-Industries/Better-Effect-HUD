@@ -1,6 +1,7 @@
 package overcooked_industries.better_effect_hud.client.screens.elements;
 
 import net.minecraft.client.gui.components.AbstractSliderButton;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
 import overcooked_industries.better_effect_hud.client.BetterEffectHudConfig;
 import overcooked_industries.better_effect_hud.client.screens.BetterEffectHudAbstractScreen;
@@ -15,7 +16,7 @@ public class BetterEffectHudSlider extends AbstractSliderButton {
     BetterEffectHudAbstractScreen.BetterEffectHudCallable updateFunction;
     Object configObject;
 
-    public BetterEffectHudSlider(int x, int y, int width, int height, String text, VarHandle handle, double min, double max, BetterEffectHudAbstractScreen.BetterEffectHudCallable updateFunction, Object configObject) {
+    public BetterEffectHudSlider(int x, int y, int width, int height, String text, VarHandle handle, double min, double max, BetterEffectHudAbstractScreen.BetterEffectHudCallable updateFunction, Object configObject, Component tooltip) {
         this.handle = handle;
         this.text = text;
         this.min = min;
@@ -24,6 +25,7 @@ public class BetterEffectHudSlider extends AbstractSliderButton {
         this.configObject = configObject;
         super(x, y, width, height, Component.empty(), ((double) handle.get(configObject) - min) / (max - min));
         updateMessage();
+        setTooltip(Tooltip.create(tooltip));
     }
 
     @Override
