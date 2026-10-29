@@ -1,7 +1,7 @@
 package overcooked_industries.better_effect_hud.client.screens.elements;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -21,8 +21,8 @@ public class BetterEffectHudLabel extends AbstractWidget {
     }
 
     @Override
-    public void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
-        graphics.text(Minecraft.getInstance().font, getMessage(), getAlignedPos(getX(), alignment.posX, getWidth()), getAlignedPos(getY(), alignment.posY, getHeight()), color, dropshadow);
+    public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float a) {
+        graphics.drawString(Minecraft.getInstance().font, getMessage(), getAlignedPos(getX(), alignment.posX, getWidth()), getAlignedPos(getY(), alignment.posY, getHeight()), color, dropshadow);
     }
 
     public void setColor(int color) {

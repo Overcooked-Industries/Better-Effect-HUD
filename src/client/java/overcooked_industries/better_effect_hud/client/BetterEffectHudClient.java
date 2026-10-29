@@ -4,7 +4,6 @@ import net.fabricmc.api.ClientModInitializer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.sounds.SoundEvents;
-import org.spongepowered.asm.mixin.Unique;
 
 public class BetterEffectHudClient implements ClientModInitializer {
 

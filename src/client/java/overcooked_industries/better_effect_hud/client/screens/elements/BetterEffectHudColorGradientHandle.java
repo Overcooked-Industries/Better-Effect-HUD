@@ -1,7 +1,7 @@
 package overcooked_industries.better_effect_hud.client.screens.elements;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -65,10 +65,10 @@ public class BetterEffectHudColorGradientHandle extends AbstractWidget.WithInact
         return this.isActive() && (this.isHovered() || this.isFocused()) ? BetterEffectHud.id("textures/gui/gradient_handle_overlay_highlighted.png") : BetterEffectHud.id("textures/gui/gradient_handle_overlay.png");
     }
 
-    public void extractWidgetRenderState(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY, final float a) {
+    public void renderWidget(final GuiGraphics graphics, final int mouseX, final int mouseY, final float a) {
         graphics.blit(RenderPipelines.GUI_TEXTURED, BetterEffectHud.id("textures/gui/gradient_handle.png"), this.getOffsetPosX(), this.getY(), 0, 0, this.getWidth(), this.getHeight(), this.getWidth(), this.getHeight(), colorSetting.getColorGradient().get(id).getColor());
         graphics.blit(RenderPipelines.GUI_TEXTURED, this.getHandleOverlaySprite(), this.getOffsetPosX(), this.getY(), 0, 0, this.getWidth(), this.getHeight(), this.getWidth(), this.getHeight(), ARGB.white(this.alpha));
-        this.extractScrollingStringOverContents(graphics.textRendererForWidget(this, GuiGraphicsExtractor.HoveredTextEffects.NONE), this.getMessage(), 2);
+        this.renderScrollingStringOverContents(graphics.textRendererForWidget(this, GuiGraphics.HoveredTextEffects.NONE), this.getMessage(), 2);
         this.handleCursor(graphics);
     }
 
@@ -76,7 +76,7 @@ public class BetterEffectHudColorGradientHandle extends AbstractWidget.WithInact
         return Math.round(this.getX() + (colorSetting.getColorGradient().get(id).getPos() + offset) * baseSizeX);
     }
 
-    protected void handleCursor(final GuiGraphicsExtractor graphics) {}
+    protected void handleCursor(final GuiGraphics graphics) {}
 
     public void onClick(final MouseButtonEvent event, final boolean doubleClick) {
         if (event.buttonInfo().button() == 3) {

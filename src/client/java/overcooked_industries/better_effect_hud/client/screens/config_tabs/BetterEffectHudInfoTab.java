@@ -40,7 +40,7 @@ public class BetterEffectHudInfoTab extends BetterEffectHudAbstractTab {
                         i * buttonSize - 205 + buttonSize / 2, 96, buttonSize, 21, BetterEffectHudAlignment.TOP_MIDDLE, Component.literal(String.format("%.2f", buttonSettingSize)), (btn) -> {
                             BetterEffectHudConfig.getInstance().infoSize = buttonSettingSize;
                             BetterEffectHudConfig.serialize();
-                            Minecraft.getInstance().gui.setScreen(screen);
+                            Minecraft.getInstance().setScreen(screen);
                         },
                         BetterEffectHudConfig.getInstance().infoSize == buttonSettingSize
                 ));

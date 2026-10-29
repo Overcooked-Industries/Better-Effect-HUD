@@ -7,8 +7,8 @@ import net.minecraft.network.chat.Component;
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import net.minecraft.client.InputType;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.gui.GuiGraphicsExtractor.HoveredTextEffects;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphics.HoveredTextEffects;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.sounds.SoundManager;
@@ -63,7 +63,8 @@ public class BetterEffectHudColorGraph extends AbstractWidget.WithInactiveMessag
         return Component.translatable("gui.narrate.slider", new Object[]{this.getMessage()});
     }
 
-    public void extractWidgetRenderState(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY, final float a) {
+    @Override
+    public void renderWidget(final GuiGraphics graphics, final int mouseX, final int mouseY, final float a) {
         graphics.blit(RenderPipelines.GUI_TEXTURED, this.backgroundSprite, this.getX(), this.getY(), 0, 0, this.getWidth(), this.getHeight(), this.getWidth(), this.getHeight(), color);
         graphics.blit(
                 RenderPipelines.GUI_TEXTURED,
@@ -73,11 +74,11 @@ public class BetterEffectHudColorGraph extends AbstractWidget.WithInactiveMessag
                 0, 0, cursorSizeX, cursorSizeY, cursorSizeX, cursorSizeY,
                 ARGB.white(this.alpha)
         );
-        this.extractScrollingStringOverContents(graphics.textRendererForWidget(this, HoveredTextEffects.NONE), this.getMessage(), 2);
+        this.renderScrollingStringOverContents(graphics.textRendererForWidget(this, HoveredTextEffects.NONE), this.getMessage(), 2);
         this.handleCursor(graphics);
     }
 
-    protected void handleCursor(final GuiGraphicsExtractor graphics) {
+    protected void handleCursor(final GuiGraphics graphics) {
         if (this.isHovered()) {
             graphics.requestCursor(this.isActive() ? (this.dragging ? CursorTypes.POINTING_HAND : CursorTypes.RESIZE_ALL) : CursorTypes.NOT_ALLOWED);
         }

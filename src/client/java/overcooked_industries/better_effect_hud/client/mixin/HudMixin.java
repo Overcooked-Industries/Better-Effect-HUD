@@ -4,16 +4,14 @@ import com.google.common.collect.Ordering;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
-import com.mojang.renderpearl.api.pipeline.RenderPipeline;
+import com.mojang.blaze3d.pipeline.RenderPipeline;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.gui.Hud;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
-import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
@@ -41,7 +39,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-@Mixin(Hud.class)
+@Mixin(Gui.class)
 public abstract class HudMixin {
     @Unique public int warningColor;
     @Unique public int warningTargetColor;
@@ -58,23 +56,24 @@ public abstract class HudMixin {
     @Unique public boolean playedWarningSound = false;
     @Unique public int warningSoundLoopCooldown = 0;
 
-    @Inject(method = "extractEffects", at = @At("HEAD"))
-    private void extractEffects(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker, CallbackInfo ci) {
+    @Inject(method = "renderEffects", at = @At("HEAD"))
+    private void renderEffects(GuiGraphics graphics, DeltaTracker deltaTracker, CallbackInfo ci) {
         beneficialCount = 0;
         harmfulCount = 0;
         extraBeneficialCount = 0;
         extraHarmfulCount = 0;
     }
-    @WrapOperation(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;blitSprite(Lcom/mojang/renderpearl/api/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V"), method = "extractEffects")
+
+    @WrapOperation(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V"), method = "renderEffects")
     private void background(
-            GuiGraphicsExtractor instance,
+            GuiGraphics instance,
             RenderPipeline renderPipeline,
             Identifier location,
             int x, int y, int width, int height,
             Operation<Void> original,
-            @Local(name = "instance") MobEffectInstance mobEffectInstance,
-            @Local(name = "activeEffects") Collection<MobEffectInstance> activeEffects,
-            @Local(name = "graphics", argsOnly = true) GuiGraphicsExtractor graphics
+            @Local(name = "mobEffectInstance") MobEffectInstance mobEffectInstance,
+            @Local(name = "collection") Collection<MobEffectInstance> activeEffects,
+            @Local(name = "guiGraphics", argsOnly = true) GuiGraphics guiGraphics
     ) {
         if (!BetterEffectHudConfig.getInstance().enableMod) {
             original.call(instance, renderPipeline, location, x, y, width, height);
@@ -118,7 +117,7 @@ public abstract class HudMixin {
             backgroundAlpha = Mth.clamp((float) remainingDuration / 10.0F / 5.0F * 0.5F, 0.0F, 0.5F) + Mth.cos((float) remainingDuration * (float) Math.PI / 5.0F) * Mth.clamp((float) usedSeconds / 10.0F * 0.25F, 0.0F, 0.25F);
             backgroundAlpha = Mth.clamp(backgroundAlpha, 0.0F, 1.0F);
         }
-        if (!BetterEffectHudConfig.getInstance().backgroundHide) graphics.blitSprite(renderPipeline, location, posX, posY, width, height, backgroundColor & ARGB.colorFromFloat(backgroundAlpha, 1, 1, 1));
+        if (!BetterEffectHudConfig.getInstance().backgroundHide) guiGraphics.blitSprite(renderPipeline, location, posX, posY, width, height, backgroundColor & ARGB.colorFromFloat(backgroundAlpha, 1, 1, 1));
         double barLocationId = BetterEffectHudConfig.getInstance().barLocationId;
         float barValue = (float) mobEffectInstance.getDuration() / currentMobEffectsMaxTime[indexOfEffectType(currentMobEffects, mobEffectInstance.getEffect().value())];
         boolean vertical = barLocationId % 2 == 1;
@@ -129,24 +128,24 @@ public abstract class HudMixin {
         int barBackgroundColor = ARGB.color(barBackgroundBrightness, 255, 255, 255);
         if (BetterEffectHudConfig.getInstance().enableDurationBar) {
             if (BetterEffectHudConfig.getInstance().barCircle) {
-                drawDurationBarCircle(graphics, posX, posY, 1f, barColor & barBackgroundColor, out);
-                drawDurationBarCircle(graphics, posX, posY, barValue, barColor, out);
+                drawDurationBarCircle(guiGraphics, posX, posY, 1f, barColor & barBackgroundColor, out);
+                drawDurationBarCircle(guiGraphics, posX, posY, barValue, barColor, out);
             } else {
-                drawDurationBar(graphics, posX, posY, 1f, barColor & barBackgroundColor, vertical, otherside, reverse, out);
-                drawDurationBar(graphics, posX, posY, barValue, barColor, vertical, otherside, reverse, out);
+                drawDurationBar(guiGraphics, posX, posY, 1f, barColor & barBackgroundColor, vertical, otherside, reverse, out);
+                drawDurationBar(guiGraphics, posX, posY, barValue, barColor, vertical, otherside, reverse, out);
             }
         }
     }
-    @WrapOperation(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;blitSprite(Lcom/mojang/renderpearl/api/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIIII)V"), method = "extractEffects")
+    @WrapOperation(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIIII)V"), method = "renderEffects")
     private void foreground(
-            GuiGraphicsExtractor instance,
+            GuiGraphics instance,
             RenderPipeline renderPipeline,
             Identifier location,
             int x, int y, int width, int height, int color,
             Operation<Void> original,
-            @Local(name = "instance") MobEffectInstance mobEffectInstance,
-            @Local(name = "activeEffects") Collection<MobEffectInstance> activeEffects,
-            @Local(name = "graphics", argsOnly = true) GuiGraphicsExtractor graphics
+            @Local(name = "mobEffectInstance") MobEffectInstance mobEffectInstance,
+            @Local(name = "collection") Collection<MobEffectInstance> activeEffects,
+            @Local(name = "guiGraphics", argsOnly = true) GuiGraphics graphics
     ) {
         if (!BetterEffectHudConfig.getInstance().enableMod) {
             original.call(instance, renderPipeline, location, x, y, width, height, color);
@@ -205,15 +204,15 @@ public abstract class HudMixin {
         BetterEffectHudLabel timerLabel = BetterEffectHudAbstractScreen.newLabel(Component.literal(getDuration(mobEffectInstance)), timerPosX, timerPosY, getColorOfMode(BetterEffectHudConfig.getInstance().timerColor, mobEffectInstance), BetterEffectHudAlignment.TOP_LEFT, timerPos, true);
         BetterEffectHudLabel potencyLabel = BetterEffectHudAbstractScreen.newLabel(Component.literal(getPotency(mobEffectInstance)), potencyPosX, potencyPosY, getColorOfMode(BetterEffectHudConfig.getInstance().potencyColor, mobEffectInstance), BetterEffectHudAlignment.TOP_LEFT, potencyPos, true);
 
-        if (BetterEffectHudConfig.getInstance().enableTimer) timerLabel.extractWidgetRenderState(graphics, 0, 0, 0);
-        if (BetterEffectHudConfig.getInstance().enablePotency) potencyLabel.extractWidgetRenderState(graphics, 0, 0, 0);
+        if (BetterEffectHudConfig.getInstance().enableTimer) timerLabel.renderWidget(graphics, 0, 0, 0);
+        if (BetterEffectHudConfig.getInstance().enablePotency) potencyLabel.renderWidget(graphics, 0, 0, 0);
         graphics.pose().scale(guiUpscale);
 
         if (BetterEffectHudConfig.getInstance().enableWarning && mobEffectInstance.getDuration() < BetterEffectHudConfig.getInstance().warningTime * 20) graphics.blit(renderPipeline, BetterEffectHud.id("textures/gui/effect_warning.png"), posX, posY, 0, 0, 8, 8, 8, 8, color);
         graphics.pose().popMatrix();
     }
 
-    @WrapOperation(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;getActiveEffects()Ljava/util/Collection;"), method = "extractEffects")
+    @WrapOperation(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;getActiveEffects()Ljava/util/Collection;"), method = "renderEffects")
     private Collection<MobEffectInstance> setCurrentEffects(LocalPlayer instance, Operation<Collection<MobEffectInstance>> original) {
         subColorTime += 1;
         if (subColorTime >= Minecraft.getInstance().getFps() / 25) {
@@ -262,13 +261,13 @@ public abstract class HudMixin {
 
         return activeEffects;
     }
-    @WrapOperation(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/effect/MobEffectInstance;getDuration()I"), method = "extractEffects")
+    @WrapOperation(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/effect/MobEffectInstance;getDuration()I"), method = "renderEffects")
     private int getDuration(MobEffectInstance instance, Operation<Integer> original) {
         return original.call(instance) - 4;
     }
 
-    @WrapOperation(at = @At(value = "INVOKE", target = "Lnet/minecraft/util/ARGB;colorFromFloat(FFFF)I"), method = "extractVignette")
-    private int extractVignette(float alpha, float red, float green, float blue, Operation<Integer> original, @Local(name = "camera", argsOnly = true) @Nullable Entity camera) {
+    @WrapOperation(at = @At(value = "INVOKE", target = "Lnet/minecraft/util/ARGB;colorFromFloat(FFFF)I"), method = "renderVignette")
+    private int extractVignette(float alpha, float red, float green, float blue, Operation<Integer> original, @Local(name = "entity", argsOnly = true) @Nullable Entity camera) {
         if (!BetterEffectHudConfig.getInstance().enableMod) return original.call(alpha, red, green, blue);
         int org = original.call(alpha, red, green, blue);
 
@@ -361,7 +360,7 @@ public abstract class HudMixin {
         return -1;
     }
 
-    private void drawDurationBar(GuiGraphicsExtractor graphics, int posX, int posY, float value, int color, boolean vertical, boolean otherside, boolean reverse, boolean out) {
+    private void drawDurationBar(GuiGraphics graphics, int posX, int posY, float value, int color, boolean vertical, boolean otherside, boolean reverse, boolean out) {
         int lengh = (int) Math.floor(value * 18);
         posX += 2;
         posY += 2;
@@ -386,7 +385,7 @@ public abstract class HudMixin {
         }
         graphics.fill(posX, posY, posX + offsetX,posY + offsetY, color);
     }
-    private void drawDurationBarCircle(GuiGraphicsExtractor graphics, int posX, int posY, float barValue, int color, boolean out) {
+    private void drawDurationBarCircle(GuiGraphics graphics, int posX, int posY, float barValue, int color, boolean out) {
         drawDurationBar(graphics, posX, posY, inverseLerpClamp(0.5f, 0.75f, barValue), color, false, false, true, out);
         drawDurationBar(graphics, posX, posY, inverseLerpClamp(0f, 0.25f, barValue), color, false, true, false, out);
         drawDurationBar(graphics, posX, posY, inverseLerpClamp(0.75f, 1.00f, barValue), color, true, false, false, out);

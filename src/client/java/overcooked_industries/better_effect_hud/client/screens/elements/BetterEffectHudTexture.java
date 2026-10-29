@@ -1,8 +1,7 @@
 package overcooked_industries.better_effect_hud.client.screens.elements;
 
-import com.mojang.renderpearl.api.pipeline.RenderPipeline;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import com.mojang.blaze3d.pipeline.RenderPipeline;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -14,7 +13,7 @@ public class BetterEffectHudTexture extends AbstractWidget {
     private final RenderPipeline renderPipeline;
     private final Identifier texture;
 
-    public BetterEffectHudTexture(int posX, int posY, int width, int height,  int color, RenderPipeline renderPipeline, Identifier texture) {
+    public BetterEffectHudTexture(int posX, int posY, int width, int height, int color, RenderPipeline renderPipeline, Identifier texture) {
         super(posX, posY, width, height, Component.literal(""));
         this.color = color;
         this.renderPipeline = renderPipeline;
@@ -26,7 +25,7 @@ public class BetterEffectHudTexture extends AbstractWidget {
     }
 
     @Override
-    protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+    protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float a) {
         graphics.blit(renderPipeline, texture, getX(), getY(), 0, 0, getWidth(), getHeight(), getWidth(), getHeight(), color);
     }
 

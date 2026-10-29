@@ -1,9 +1,6 @@
 {
 	"required": true,
-	"package": "overcooked_industries.better_effect_hud.mixin",
 	"compatibilityLevel": "JAVA_25",
-	"mixins": [
-	],
 	"injectors": {
 		"defaultRequire": 1
 	},

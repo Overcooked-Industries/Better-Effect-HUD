@@ -1,7 +1,7 @@
 package overcooked_industries.better_effect_hud.client.screens.elements;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -66,10 +66,11 @@ public class BetterEffectHudColorGradientBox extends AbstractWidget.WithInactive
         Minecraft.getInstance().setScreenAndShow(screen);
     }
 
-    public void extractWidgetRenderState(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY, final float a) {
+    @Override
+    public void renderWidget(final GuiGraphics graphics, final int mouseX, final int mouseY, final float a) {
         graphics.blitSprite(RenderPipelines.GUI_TEXTURED, this.getHandleOverlaySprite(), this.getX(), this.getY(), this.getWidth(), this.getHeight(), ARGB.white(this.alpha));
         for (int i = 1; i < this.getWidth() - 1; i++) graphics.blit(RenderPipelines.GUI_TEXTURED, BetterEffectHud.id("textures/gui/gradient.png"), this.getX() + i, this.getY(), 0, 0, 1, this.getHeight(), 1, this.getHeight(), getGradientPiece((float) i / this.getWidth(), colorSetting));
-        this.extractScrollingStringOverContents(graphics.textRendererForWidget(this, GuiGraphicsExtractor.HoveredTextEffects.NONE), this.getMessage(), 2);
+        this.renderScrollingStringOverContents(graphics.textRendererForWidget(this, GuiGraphics.HoveredTextEffects.NONE), this.getMessage(), 2);
         this.handleCursor(graphics);
     }
 

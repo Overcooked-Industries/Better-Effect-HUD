@@ -1,7 +1,7 @@
 package overcooked_industries.better_effect_hud.client.screens;
 
 import com.google.common.collect.ImmutableList;
-import com.mojang.renderpearl.api.pipeline.RenderPipeline;
+import com.mojang.blaze3d.pipeline.RenderPipeline;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.components.tabs.*;
@@ -123,7 +123,7 @@ public abstract class BetterEffectHudAbstractScreen extends Screen {
             handle.set(BetterEffectHudConfig.getInstance(), !(boolean) handle.get(BetterEffectHudConfig.getInstance()));
 
             BetterEffectHudConfig.serialize();
-            Minecraft.getInstance().gui.setScreen(screen);
+            Minecraft.getInstance().setScreen(screen);
         }, disabled, tooltip);
     }
     public static Button newToggleButton(Component name, int posX, int posY, int sizeX, int sizeY, BetterEffectHudAlignment alignment, VarHandle handle, Screen screen, boolean disabled) {
@@ -213,7 +213,7 @@ public abstract class BetterEffectHudAbstractScreen extends Screen {
                 .onValueChange((checkbox, value) -> {
                     handle.set(handleObject, (Boolean) !selected);
                     handleUpdate.call();
-                    Minecraft.getInstance().gui.setScreen(screen);
+                    Minecraft.getInstance().setScreen(screen);
                 })
                 .tooltip(Tooltip.create(tooltip))
                 .build();
@@ -246,10 +246,10 @@ public abstract class BetterEffectHudAbstractScreen extends Screen {
 
         int windowSizeX = Minecraft.getInstance().getWindow().getGuiScaledWidth();
         TabManager tabManager = new TabManager(screen::addRenderableWidget, screen::removeWidget);
-        List<MenuTabBar.MenuTabButton> newMenuTabButtons = new ArrayList<>();
+        List<TabButton> newMenuTabButtons = new ArrayList<>();
         int tabSize = (int) Math.floor((float) windowSizeX / (float) tabCount);
         for (Tab tab : tabs) {
-            newMenuTabButtons.add(new MenuTabBar.MenuTabButton(tabManager, tab, tabSize, 24));
+            newMenuTabButtons.add(new TabButton.MenuTabButton(tabManager, tab, tabSize, 24));
         }
         TabNavigationBar newTabNavigationBar = new MenuTabBar((windowSizeX - (tabSize * tabCount)) / 2, posY, windowSizeX, 24, tabManager, ImmutableList.copyOf(newMenuTabButtons), ImmutableList.copyOf(tabs));
         newTabNavigationBar.selectTab(initialTab, false);
@@ -301,7 +301,7 @@ public abstract class BetterEffectHudAbstractScreen extends Screen {
                     (btn) -> {
                         handle.set(BetterEffectHudConfig.getInstance(), (BetterEffectHudAlignment) align);
                         BetterEffectHudConfig.serialize();
-                        Minecraft.getInstance().gui.setScreen(screen);
+                        Minecraft.getInstance().setScreen(screen);
                     },
                     hudAlignmentValue == align));
         }
